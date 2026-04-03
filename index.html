@@ -1,0 +1,5852 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atlas10X — Strategic Analysis Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #E8573A;
+      --color-secondary: #D4A44A;
+      --color-bg: #0A0A0A;
+      --color-bg-elevated: #1A1A1A;
+      --color-bg-highlight: #2A1A0A;
+      --color-text-primary: #FFFFFF;
+      --color-text-secondary: #999999;
+      --color-text-tertiary: #666666;
+      --color-text-muted: #777777;
+      --color-border: #2A2A2A;
+      --color-border-light: #333333;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --max-w: 1300px;
+      --sec-pad: 140px;
+      --r-sm: 6px;
+      --r-md: 10px;
+      --r-lg: 16px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      overflow-x: hidden;
+      line-height: 1.6
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none
+    }
+
+    img {
+      max-width: 100%;
+      display: block
+    }
+
+    /* LOAD-IN: Page starts black, hero fades in (Platform-style) */
+    #loader {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: var(--color-bg);
+      transition: opacity .8s ease-out
+    }
+
+    #loader.done {
+      opacity: 0;
+      pointer-events: none
+    }
+
+    /* PROGRESS BAR */
+    .spb {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: var(--color-primary);
+      z-index: 9999;
+      transform-origin: left;
+      transform: scaleX(0);
+      width: 100%;
+      will-change: transform
+    }
+
+    /* NAV — minimal: logo left, hamburger right, both fixed */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 1.5rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none
+    }
+
+    .n-logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -.03em;
+      pointer-events: auto
+    }
+
+    .n-logo span {
+      font-weight: 900;
+      color: var(--color-primary)
+    }
+
+    .n-ham {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+      pointer-events: auto
+    }
+
+    .n-ham span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--color-primary);
+      border-radius: 2px
+    }
+
+    /* REVEAL */
+    .rv {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1.5s ease-out, transform 1.5s ease-out
+    }
+
+    .rv.vis {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    .rv-d1 {
+      transition-delay: .3s
+    }
+
+    .rv-d2 {
+      transition-delay: .5s
+    }
+
+    .rv-d3 {
+      transition-delay: .8s
+    }
+
+    .rv-d4 {
+      transition-delay: 1.1s
+    }
+
+    .rv-d5 {
+      transition-delay: 1.4s
+    }
+
+    .rvs {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .5s ease-out, transform .5s ease-out
+    }
+
+    .rvs.vis {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    /* SECTION TEMPLATE */
+    .sc {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0 2.5rem
+    }
+
+    .sdt {
+      font-size: clamp(4rem, 10vw, 9rem);
+      font-weight: 900;
+      color: var(--color-text-muted);
+      letter-spacing: -.03em;
+      line-height: 1;
+      margin-bottom: 3rem
+    }
+
+    .sh {
+      display: grid;
+      grid-template-columns: 200px 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 4rem;
+      align-items: start
+    }
+
+    .sh-label {
+      font-size: .8rem;
+      color: var(--color-text-secondary);
+      font-weight: 400;
+      border-left: 2px solid var(--color-primary);
+      padding-left: 1rem;
+      line-height: 1.6
+    }
+
+    .sh-sub {
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 500;
+      color: var(--color-text-primary);
+      line-height: 1.35;
+      font-style: italic
+    }
+
+    .sh-desc {
+      font-size: .9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7
+    }
+
+    .s-spacer {
+      height: var(--sec-pad)
+    }
+
+    /* CTA ROW */
+    .cta-r {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2rem 0;
+      margin-top: 3rem
+    }
+
+    .d-bars {
+      display: flex;
+      gap: 3px
+    }
+
+    .d-bars span {
+      display: block;
+      width: 3px;
+      height: 16px;
+      background: var(--color-primary);
+      border-radius: 1px;
+      opacity: .6
+    }
+
+    .d-bars span:nth-child(odd) {
+      opacity: .3;
+      height: 12px
+    }
+
+    .cta-l {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: .9rem;
+      color: var(--color-text-secondary);
+      transition: color .3s
+    }
+
+    .cta-l:hover {
+      color: var(--color-text-primary)
+    }
+
+    .cta-c {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #fff;
+      flex-shrink: 0;
+      transition: transform .3s
+    }
+
+    .cta-c:hover {
+      transform: scale(1.05)
+    }
+
+    .cta-c svg {
+      width: 18px;
+      height: 18px
+    }
+
+    .arrow-svg {
+      viewBox: 0 0 24 24;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2
+    }
+
+    /* HERO */
+    /* Particle canvas is FIXED — stays in viewport while content scrolls over it */
+    #hc {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      transition: opacity .5s
+    }
+
+    .hero-particle-wrap {
+      position: relative;
+      z-index: 1
+    }
+
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: visible
+    }
+
+    .hero-ct {
+      position: relative;
+      z-index: 1;
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 2.5rem;
+      padding-top: 8rem;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 2rem;
+      align-items: start
+    }
+
+    .hero-l {
+      max-width: 800px;
+      padding-left: 10%
+    }
+
+    .h-badge {
+      display: block;
+      font-size: .9rem;
+      font-weight: 400;
+      color: var(--color-text-secondary);
+      margin-bottom: 2.5rem;
+      border-left: 2px solid var(--color-primary);
+      padding-left: 1.2rem;
+      line-height: 1.5;
+      text-transform: none;
+      letter-spacing: normal
+    }
+
+    .h-badge .dot {
+      display: none
+    }
+
+    .h-badge strong {
+      color: var(--color-text-primary);
+      font-weight: 700;
+      display: block
+    }
+
+    .h-hl {
+      font-size: clamp(3.5rem, 6.5vw, 6.5rem);
+      font-weight: 400;
+      letter-spacing: -.03em;
+      line-height: 1.05;
+      margin-bottom: 3rem
+    }
+
+    .h-hl .ac {
+      color: var(--color-primary);
+      font-weight: 500
+    }
+
+    .h-sub {
+      font-size: 1rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      max-width: 400px
+    }
+
+    .h-acts {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 4rem
+    }
+
+    .h-acts-text {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--color-text-primary);
+      letter-spacing: -.02em
+    }
+
+    .h-acts-text span {
+      display: block;
+      font-size: .85rem;
+      font-weight: 400;
+      color: var(--color-text-secondary);
+      margin-top: .4rem;
+      line-height: 1.5;
+      max-width: 260px
+    }
+
+    .h-acts-line {
+      width: 50px;
+      height: 1px;
+      background: var(--color-border-light);
+      flex-shrink: 0
+    }
+
+    .btn-p {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: var(--color-primary);
+      color: #fff;
+      padding: .8rem 1.8rem;
+      border-radius: var(--r-sm);
+      font-size: .9rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: opacity .3s;
+      font-family: var(--font)
+    }
+
+    .btn-p:hover {
+      opacity: .9
+    }
+
+    .btn-s {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: transparent;
+      color: var(--color-text-primary);
+      padding: .8rem 1.8rem;
+      border-radius: var(--r-sm);
+      font-size: .9rem;
+      font-weight: 500;
+      border: 1px solid var(--color-border-light);
+      cursor: pointer;
+      transition: border-color .3s;
+      font-family: var(--font)
+    }
+
+    .btn-s:hover {
+      border-color: var(--color-text-secondary)
+    }
+
+    .h-stats {
+      display: flex;
+      gap: 3rem;
+      align-items: baseline
+    }
+
+    .h-stat {
+      display: flex;
+      align-items: baseline;
+      gap: .8rem
+    }
+
+    .h-stat-v {
+      font-size: 2.2rem;
+      font-weight: 300;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-primary)
+    }
+
+    .h-stat-l-wrap {
+      display: flex;
+      flex-direction: column
+    }
+
+    .h-stat-l {
+      font-size: .75rem;
+      color: var(--color-text-primary);
+      font-weight: 500;
+      line-height: 1.3
+    }
+
+    .h-stat-l-sub {
+      font-size: .7rem;
+      color: var(--color-text-secondary);
+      font-weight: 400
+    }
+
+    .hero-r {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding-top: 2rem;
+      max-width: 280px
+    }
+
+    .h-card {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-md);
+      padding: 1rem;
+      transition: border-color .3s
+    }
+
+    .h-card:hover {
+      border-color: var(--color-border-light)
+    }
+
+    .h-card-t {
+      font-size: .7rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: .5rem
+    }
+
+    .h-card-img {
+      width: 100%;
+      height: 140px;
+      /* Placeholder for image, replaced by dynamic content */
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-tertiary);
+      font-size: .7rem
+    }
+
+    .h-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: .8rem
+    }
+
+    .h-card-name {
+      font-size: .85rem;
+      font-weight: 500
+    }
+
+    .h-card-sub {
+      font-size: .7rem;
+      color: var(--color-text-tertiary)
+    }
+
+    /* TRANSITION — sequential letter fill (typewriter) driven by scroll */
+    .trans-s {
+      position: relative;
+      overflow: hidden;
+      height: 170vh;
+      margin-top: 60vh;
+      margin-bottom: -35vh
+    }
+
+    .trans-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      z-index: 1
+    }
+
+    .trans-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 2.5rem;
+      position: relative;
+      width: 100%;
+      z-index: 1
+    }
+
+    .trans-t {
+      font-size: clamp(3.5rem, 8vw, 7.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -.03em;
+      max-width: 1000px
+    }
+
+    /* Words and letters for progressive fill — all start as translucent white */
+    .trans-word {
+      display: inline-block
+    }
+
+    .trans-char {
+      color: rgba(255, 255, 255, .12);
+      display: inline-block
+    }
+
+    /* 3D shapes — scroll-driven position, time-driven rotation */
+    .float-shapes {
+      position: absolute;
+      right: 5%;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 280px;
+      height: 400px;
+      perspective: 800px
+    }
+
+    .float-shape {
+      position: absolute;
+      border-radius: 4px;
+      transform-style: preserve-3d
+    }
+
+    .float-shape-1 {
+      width: 90px;
+      height: 90px;
+      top: 25%;
+      left: 25%;
+      background: linear-gradient(135deg, var(--color-primary) 0%, #c44a30 50%, #a83828 100%);
+      clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+      animation: shape-rotate-1 12s linear infinite;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .float-shape-2 {
+      width: 60px;
+      height: 60px;
+      top: 10%;
+      left: 60%;
+      background: linear-gradient(135deg, #d4573f 0%, #b8432d 100%);
+      clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+      animation: shape-rotate-2 16s linear infinite;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .float-shape-3 {
+      width: 45px;
+      height: 45px;
+      top: 60%;
+      left: 15%;
+      background: linear-gradient(135deg, #e8614d 0%, #c44a30 100%);
+      clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+      animation: shape-rotate-3 20s linear infinite;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    /* Time-driven rotation (facet light shifts) */
+    @keyframes shape-rotate-1 {
+      0% {
+        transform: rotate(0deg) rotateY(0deg)
+      }
+
+      100% {
+        transform: rotate(360deg) rotateY(180deg)
+      }
+    }
+
+    @keyframes shape-rotate-2 {
+      0% {
+        transform: rotate(0deg) rotateX(0deg)
+      }
+
+      100% {
+        transform: rotate(-360deg) rotateX(180deg)
+      }
+    }
+
+    @keyframes shape-rotate-3 {
+      0% {
+        transform: rotate(0deg) rotateZ(0deg)
+      }
+
+      100% {
+        transform: rotate(360deg) rotateZ(-180deg)
+      }
+    }
+
+    /* Content sections after particles need solid bg to cover fixed canvas */
+    #discovery,
+    #intelligence,
+    #studio,
+    #process,
+    #metrics,
+    #faq,
+    #contact,
+    .tk-s,
+    .mq-s,
+    .cta-s,
+    footer,
+    .s-spacer {
+      position: relative;
+      z-index: 1;
+      background: var(--color-bg)
+    }
+
+    /* WORK GRID — 3-row layout matching Platform */
+    .work-row-1 {
+      display: grid;
+      grid-template-columns: 1.8fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem
+    }
+
+    .work-row-2 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem
+    }
+
+    .work-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1.8fr;
+      gap: 1rem
+    }
+
+    .work-card {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-md);
+      position: relative;
+      overflow: hidden;
+      transition: border-color .3s
+    }
+
+    .work-card:hover {
+      border-color: var(--color-border-light)
+    }
+
+    .work-featured {
+      height: 85vh;
+      min-height: 500px
+    }
+
+    .work-sm {
+      height: 350px
+    }
+
+    .work-sm-tall {
+      height: 350px
+    }
+
+    .work-stats {
+      height: 350px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center
+    }
+
+    .work-card-img {
+      position: absolute;
+      top: 2.8rem;
+      left: 1rem;
+      right: 1rem;
+      bottom: 1rem;
+      background-color: #0A0A0A;
+      background-size: cover;
+      background-position: center top;
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-tertiary);
+      font-size: .8rem;
+      z-index: 0
+    }
+
+    /* Contained image variant — for images that shouldn't bleed */
+    .work-card-img.img-contain {
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center
+    }
+
+    /* Full-bleed variant for featured cards */
+    .work-card-img.img-full {
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 0
+    }
+
+    /* Bottom fade blur — shows content continues below */
+    .img-fade-bottom::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 30%;
+      background: linear-gradient(to bottom, transparent, #0A0A0A);
+      pointer-events: none;
+      z-index: 1
+    }
+
+    /* Black card background for all work cards */
+    .work-card {
+      background: #0A0A0A;
+      border: 1px solid var(--color-border)
+    }
+
+    .work-card-label {
+      position: absolute;
+      top: .6rem;
+      left: 1rem;
+      font-size: .75rem;
+      color: var(--color-text-secondary);
+      z-index: 3
+    }
+
+    .work-card-title {
+      position: absolute;
+      top: .8rem;
+      left: 1rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      z-index: 3
+    }
+
+    /* Dark gradient behind title area for full-bleed images */
+    .work-featured::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6rem;
+      background: linear-gradient(to bottom, rgba(10, 10, 10, 0.7), transparent);
+      z-index: 2;
+      border-radius: var(--r-md) var(--r-md) 0 0;
+      pointer-events: none
+    }
+
+    .work-card-dots {
+      display: none !important;
+      position: absolute;
+      top: .8rem;
+      right: 1rem;
+      grid-template-columns: repeat(3, 4px);
+      gap: 3px;
+      z-index: 3
+    }
+
+    .work-card-dots span {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--color-text-secondary)
+    }
+
+    /* Coral accent card */
+    .work-accent {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between
+    }
+
+    .work-accent-tag {
+      font-size: .7rem;
+      color: rgba(255, 255, 255, .6);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: .8rem;
+      border-bottom: 1px solid rgba(255, 255, 255, .15)
+    }
+
+    .work-accent-title {
+      font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      color: #fff;
+      margin-top: 1.5rem
+    }
+
+    .work-accent-text {
+      font-size: .85rem;
+      color: rgba(255, 255, 255, .75);
+      line-height: 1.6;
+      margin-top: 1rem
+    }
+
+    .work-accent-dots {
+      flex: 1;
+      margin-top: 1.5rem;
+      background-image: radial-gradient(rgba(255, 255, 255, .2) 2px, transparent 2px);
+      background-size: 28px 28px;
+      background-position: center;
+      border-radius: var(--r-sm);
+      position: relative;
+      overflow: hidden
+    }
+
+    .dot-wave-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2
+    }
+
+    .work-accent-footer {
+      font-size: .8rem;
+      color: rgba(255, 255, 255, .7);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      margin-top: 1rem
+    }
+
+    /* Stats card (row 3 right) */
+    .work-stats-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -.02em
+    }
+
+    .work-stats-sub {
+      font-size: .9rem;
+      margin-top: .3rem
+    }
+
+    .work-stats-badge {
+      display: inline-block;
+      font-size: .7rem;
+      background: var(--color-border);
+      padding: .3rem .8rem;
+      border-radius: 4px;
+      margin-top: 1.5rem;
+      color: var(--color-text-secondary)
+    }
+
+    .work-stats-value {
+      font-size: 4rem;
+      font-weight: 300;
+      color: var(--color-text-secondary);
+      margin-top: .5rem;
+      font-variant-numeric: tabular-nums
+    }
+
+    .work-stats-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+      font-size: .9rem;
+      color: var(--color-text-secondary)
+    }
+
+    /* MOSAIC ANIMATION */
+    .mosaic-container {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: grid;
+      pointer-events: none
+    }
+
+    .mosaic-block {
+      background: var(--color-bg-elevated);
+      transition: opacity .5s ease, transform .5s ease
+    }
+
+    .mosaic-card.revealed .mosaic-block {
+      opacity: 0;
+      transform: scale(0.2)
+    }
+
+    @media(max-width:1024px) {
+      .work-row-1 {
+        grid-template-columns: 1fr
+      }
+
+      .work-featured {
+        height: 60vh
+      }
+
+      .work-row-2 {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .work-row-3 {
+        grid-template-columns: 1fr
+      }
+    }
+
+    @media(max-width:640px) {
+      .work-row-2 {
+        grid-template-columns: 1fr
+      }
+
+      .work-featured {
+        height: 50vh
+      }
+    }
+
+    /* COMPETITOR INTEL CARD — recreated in HTML/CSS */
+    .ci-card {
+      background: #0A0A0A;
+      padding: .8rem;
+      margin-top: 2.2rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      overflow: hidden;
+      position: relative
+    }
+
+    .ci-stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      justify-content: center;
+      margin-bottom: .3rem
+    }
+
+    .ci-step {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .5rem;
+      color: var(--color-text-tertiary);
+      flex-shrink: 0
+    }
+
+    .ci-step.ci-done {
+      background: #22C55E;
+      color: #fff
+    }
+
+    .ci-step.ci-active {
+      background: var(--color-primary);
+      color: #fff
+    }
+
+    .ci-line {
+      flex: 1;
+      height: 1px;
+      background: #333;
+      max-width: 40px
+    }
+
+    .ci-title {
+      font-size: .85rem;
+      font-weight: 800;
+      color: #fff
+    }
+
+    .ci-sub {
+      font-size: .5rem;
+      color: var(--color-text-tertiary)
+    }
+
+    .ci-search {
+      font-size: .5rem;
+      color: var(--color-text-tertiary);
+      background: #1a1a1a;
+      border: 1px solid var(--color-border);
+      border-radius: 4px;
+      padding: .3rem .5rem
+    }
+
+    .ci-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: .3rem;
+      flex: 1;
+      overflow: hidden;
+      position: relative
+    }
+
+    .ci-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40%;
+      background: linear-gradient(to bottom, transparent, #0A0A0A);
+      pointer-events: none;
+      z-index: 1
+    }
+
+    .ci-comp {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      padding: .4rem;
+      display: flex;
+      flex-direction: column;
+      gap: .2rem;
+      overflow: hidden
+    }
+
+    .ci-comp-head {
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+      flex-wrap: wrap
+    }
+
+    .ci-av {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .45rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0
+    }
+
+    .ci-comp-head strong {
+      font-size: .5rem;
+      color: #fff;
+      flex: 1
+    }
+
+    .ci-badge {
+      font-size: .35rem;
+      background: rgba(232, 87, 58, .2);
+      color: var(--color-primary);
+      padding: 1px 3px;
+      border-radius: 2px;
+      white-space: nowrap;
+      flex-shrink: 0
+    }
+
+    .ci-comp p {
+      font-size: .4rem;
+      color: var(--color-text-tertiary);
+      line-height: 1.3;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical
+    }
+
+    /* SCROLLING REPORT CARD — infinite vertical scroll with 4-edge blur */
+    .ha-scroll-wrap {
+      position: relative;
+      overflow: hidden
+    }
+
+    .ha-scroll-content {
+      display: flex;
+      flex-direction: column;
+      animation: scroll-report 20s linear infinite
+    }
+
+    .ha-scroll-img {
+      width: 100%;
+      height: auto;
+      display: block;
+      flex-shrink: 0
+    }
+
+    .ha-scroll-mask {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      box-shadow: inset 0 0 40px 30px #0A0A0A;
+      z-index: 1
+    }
+
+    .mask-no-top {
+      box-shadow: inset 30px 0 30px -10px #0A0A0A, inset -30px 0 30px -10px #0A0A0A, inset 0 -40px 40px -10px #0A0A0A !important;
+    }
+
+    .static-tab {
+      position: absolute !important;
+      top: 0;
+      left: 0;
+      right: 0;
+      border-radius: var(--r-sm) var(--r-sm) 0 0 !important;
+      border-top: none !important;
+      border-left: none !important;
+      border-right: none !important;
+      z-index: 20 !important;
+      margin-top: 0 !important;
+      box-shadow: 0 20px 30px 10px #0A0A0A !important;
+      opacity: 1 !important;
+      transform: none !important;
+      animation: none !important;
+      pointer-events: none !important;
+    }
+
+    @keyframes scroll-report {
+      0% {
+        transform: translateY(0)
+      }
+
+      100% {
+        transform: translateY(-50%)
+      }
+    }
+
+    /* FORMAT DEVICE ICONS */
+    .fmt-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: .8rem;
+      padding: 3.5rem 1.2rem 1.2rem;
+      height: 100%;
+      align-items: center
+    }
+
+    .fmt-device {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .4rem
+    }
+
+    .fmt-screen {
+      border: 1.5px solid var(--color-primary);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: rgba(232, 87, 58, .04)
+    }
+
+    .fmt-ratio {
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: .02em
+    }
+
+    .fmt-label {
+      font-size: .45rem;
+      color: var(--color-text-tertiary);
+      text-align: center;
+      letter-spacing: .02em;
+      white-space: nowrap
+    }
+
+    /* Phone — tall narrow */
+    .fmt-phone .fmt-screen {
+      width: 42px;
+      height: 76px;
+      border-radius: 8px
+    }
+
+    .fmt-notch {
+      width: 16px;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--color-border-light);
+      margin-top: -6px;
+      margin-bottom: 2px;
+      position: relative;
+      z-index: 1
+    }
+
+    /* Tablet — slightly less tall */
+    .fmt-tablet .fmt-screen {
+      width: 52px;
+      height: 65px;
+      border-radius: 6px
+    }
+
+    /* Monitor — square with stand */
+    .fmt-monitor .fmt-screen {
+      width: 64px;
+      height: 64px;
+      border-radius: 4px;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0
+    }
+
+    .fmt-stand {
+      width: 3px;
+      height: 10px;
+      background: var(--color-border-light);
+      margin-top: -1px
+    }
+
+    .fmt-base {
+      width: 20px;
+      height: 2px;
+      background: var(--color-border-light);
+      border-radius: 1px
+    }
+
+    /* Laptop — wide with keyboard */
+    .fmt-laptop .fmt-screen {
+      width: 80px;
+      height: 50px;
+      border-radius: 4px 4px 0 0
+    }
+
+    .fmt-keyboard {
+      width: 88px;
+      height: 4px;
+      background: var(--color-border-light);
+      border-radius: 0 0 3px 3px;
+      margin-top: -1px
+    }
+
+    /* GROUNDED GENERATION — reference ads left + output right */
+    .gg-layout {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      grid-template-rows: 1fr auto 1fr;
+      gap: 0 1rem;
+      padding: 3rem 1rem 1rem;
+      height: 100%
+    }
+
+    .gg-ref-img {
+      border-radius: var(--r-sm);
+      overflow: hidden
+    }
+
+    .gg-ref-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: var(--r-sm)
+    }
+
+    .gg-ref-img:first-child {
+      grid-column: 1;
+      grid-row: 1
+    }
+
+    .gg-plus {
+      grid-column: 1;
+      grid-row: 2;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--color-primary);
+      text-align: center;
+      padding: .2rem 0
+    }
+
+    .gg-ref-img:last-child {
+      grid-column: 1;
+      grid-row: 3
+    }
+
+    .gg-output {
+      grid-column: 2;
+      grid-row: 1/4;
+      border-radius: var(--r-sm);
+      overflow: hidden
+    }
+
+    .gg-output img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: var(--r-sm)
+    }
+
+    /* ITERATE NATURALLY — click-to-cycle ad slideshow */
+    .iterate-wrap {
+      position: absolute;
+      inset: 0;
+      top: 2.8rem;
+      overflow: hidden
+    }
+
+    .iterate-wrap::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 25%;
+      background: linear-gradient(to bottom, transparent, #0A0A0A);
+      pointer-events: none;
+      z-index: 2
+    }
+
+    .iterate-slides {
+      position: absolute;
+      inset: 0;
+      bottom: 0
+    }
+
+    .iterate-slide {
+      position: absolute;
+      inset: 0;
+      background-size: 90%;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0;
+      transition: opacity .6s ease-out
+    }
+
+    .iterate-slide.iterate-active {
+      opacity: 1
+    }
+
+    .iterate-btn {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      padding: .5rem 1.2rem;
+      border-radius: var(--r-sm);
+      font-family: var(--font);
+      font-size: .75rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 3;
+      transition: opacity .3s;
+      letter-spacing: .02em
+    }
+
+    .iterate-btn:hover {
+      opacity: .9
+    }
+
+    /* CHAT UI — Creative Studio conversation */
+    .chat-ui {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      padding: 2.8rem 1rem 0;
+      overflow: hidden;
+      position: relative;
+      background: #0A0A0A
+    }
+
+    .chat-msg {
+      display: flex;
+      gap: .6rem;
+      margin-bottom: .8rem
+    }
+
+    .chat-user {
+      justify-content: flex-end
+    }
+
+    .chat-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .6rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+      margin-top: .2rem
+    }
+
+    .chat-bubble {
+      max-width: 85%;
+      padding: .6rem .8rem;
+      border-radius: 10px;
+      font-size: .7rem;
+      line-height: 1.4
+    }
+
+    .chat-bubble-user {
+      background: #2a2a2a;
+      color: var(--color-text-primary);
+      border-bottom-right-radius: 3px
+    }
+
+    .chat-bubble-ai {
+      background: #1a1a1a;
+      color: var(--color-text-secondary);
+      border-bottom-left-radius: 3px
+    }
+
+    .chat-bubble-ai p {
+      margin-bottom: .5rem
+    }
+
+    .chat-ad-img {
+      border-radius: 8px;
+      overflow: hidden;
+      max-width: 220px
+    }
+
+    .chat-ad-img img {
+      width: 100%;
+      height: auto;
+      display: block
+    }
+
+    .chat-input-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: .6rem 1rem;
+      background: #1a1a1a;
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .65rem;
+      color: var(--color-text-tertiary);
+      z-index: 3
+    }
+
+    /* AD DNA CARD — recreated in HTML/CSS */
+    .dna-card {
+      background: #0A0A0A;
+      padding: 1rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      font-size: .65rem;
+      color: var(--color-text-secondary);
+      overflow: hidden;
+      gap: .4rem
+    }
+
+    .dna-header {
+      display: flex;
+      align-items: center;
+      gap: .6rem
+    }
+
+    .dna-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .6rem;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0
+    }
+
+    .dna-brand {
+      flex: 1;
+      line-height: 1.3
+    }
+
+    .dna-brand strong {
+      display: block;
+      font-size: .75rem;
+      color: #fff
+    }
+
+    .dna-sub {
+      font-size: .55rem;
+      color: var(--color-text-tertiary)
+    }
+
+    .dna-nav {
+      font-size: .8rem;
+      color: var(--color-text-tertiary);
+      letter-spacing: 4px
+    }
+
+    .dna-tabs {
+      display: flex;
+      gap: 1rem;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: .4rem
+    }
+
+    .dna-tab-active {
+      color: #fff;
+      font-weight: 600;
+      font-size: .6rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      border-bottom: 2px solid var(--color-primary);
+      padding-bottom: .3rem
+    }
+
+    .dna-tab {
+      font-size: .6rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--color-text-tertiary)
+    }
+
+    .dna-scores {
+      display: flex;
+      flex-direction: column;
+      gap: 3px
+    }
+
+    .dna-score {
+      display: flex;
+      align-items: center;
+      gap: .5rem
+    }
+
+    .dna-score-bar {
+      height: 3px;
+      border-radius: 2px;
+      flex-shrink: 0
+    }
+
+    .dna-score-lbl {
+      font-size: .5rem;
+      line-height: 1.2;
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      white-space: nowrap
+    }
+
+    .dna-section {
+      background: #1a1a1a;
+      border-radius: 6px;
+      padding: .6rem
+    }
+
+    .dna-label {
+      font-size: .5rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--color-primary);
+      font-weight: 600;
+      display: block;
+      margin-bottom: .3rem
+    }
+
+    .dna-section p {
+      font-size: .6rem;
+      color: var(--color-text-primary);
+      line-height: 1.4
+    }
+
+    .dna-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .4rem
+    }
+
+    .dna-cell {
+      background: #1a1a1a;
+      border-radius: 6px;
+      padding: .5rem
+    }
+
+    .dna-label-sm {
+      font-size: .45rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--color-text-tertiary);
+      display: block;
+      margin-bottom: .2rem
+    }
+
+    .dna-cell p {
+      font-size: .55rem;
+      color: var(--color-text-primary);
+      line-height: 1.3
+    }
+
+    .dna-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px
+    }
+
+    .dna-pill {
+      font-size: .45rem;
+      padding: 2px 5px;
+      border-radius: 3px;
+      background: #2a2a2a;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: .04em
+    }
+
+    .dna-pill-accent {
+      background: rgba(232, 87, 58, .15);
+      color: var(--color-primary)
+    }
+
+    .dna-footer {
+      margin-top: auto;
+      padding-top: .3rem
+    }
+
+    .dna-cta-btn {
+      font-size: .55rem;
+      color: var(--color-text-tertiary);
+      background: #1a1a1a;
+      padding: .3rem .6rem;
+      border-radius: 4px;
+      display: inline-block
+    }
+
+    /* BENTO */
+    .bg {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem
+    }
+
+    .bc {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-md);
+      padding: 2.5rem;
+      transition: border-color .3s;
+      position: relative;
+      overflow: hidden;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start
+    }
+
+    @media(max-width:768px) {
+      .bc {
+        min-height: 400px;
+        padding: 2rem
+      }
+    }
+
+    .bc:hover {
+      border-color: var(--color-border-light)
+    }
+
+    .bc.sp2 {
+      grid-column: span 2
+    }
+
+    .bc.feat {
+      background: var(--color-primary);
+      border-color: var(--color-primary)
+    }
+
+    /* Text Overlay Styling */
+    .bc-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      height: 100%
+    }
+
+    .bc-head {
+      max-width: 80%
+    }
+
+    .bc-lb {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--color-text-secondary);
+      margin-bottom: .8rem;
+      font-weight: 600
+    }
+
+    .bc-tt {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: .8rem;
+      letter-spacing: -.02em;
+      line-height: 1.2
+    }
+
+    .bc-tx {
+      font-size: .9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      max-width: 90%
+    }
+
+    /* Orange feature card overrides */
+    .bc.feat .bc-head {
+      align-self: center;
+      text-align: center;
+      margin-top: auto;
+      margin-bottom: auto;
+      max-width: 100%
+    }
+
+    .bc.feat .bc-lb {
+      color: rgba(255, 255, 255, .8);
+      margin-bottom: 1.5rem
+    }
+
+    .bc.feat .bc-tt {
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -.03em;
+      line-height: 1.1;
+      margin-bottom: 1.5rem
+    }
+
+    .bc.feat .bc-tx {
+      color: rgba(255, 255, 255, .9);
+      font-size: 1.1rem;
+      margin: 0 auto
+    }
+
+    /* Background Image Box */
+    .bc-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1a1a, #222);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-tertiary);
+      font-size: .85rem;
+      z-index: 0
+    }
+
+    /* Gradient overlay for readability */
+    .bc-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(10, 10, 10, 0.8) 0%, rgba(10, 10, 10, 0.1) 30%, rgba(10, 10, 10, 0.4) 100%);
+      pointer-events: none
+    }
+
+    .bc.feat .bc-img {
+      background: transparent;
+      color: rgba(255, 255, 255, .4)
+    }
+
+    .bc.feat .bc-img::after {
+      display: none
+    }
+
+    /* Decorative Elements */
+    .bc-grid-icon {
+      position: absolute;
+      top: 2.5rem;
+      right: 2.5rem;
+      display: grid;
+      grid-template-columns: repeat(3, 4px);
+      grid-template-rows: repeat(3, 4px);
+      gap: 3px;
+      z-index: 2;
+      opacity: 0.2
+    }
+
+    .bc-grid-icon span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      border-radius: 50%
+    }
+
+    .bc.feat .bc-grid-icon span {
+      background: #fff;
+      opacity: 0.5
+    }
+
+    /* Floating Bottom CTA */
+    .bc-cta-btn {
+      display: none !important;
+      position: absolute;
+      bottom: 2.5rem;
+      left: 2.5rem;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: transform .3s;
+      cursor: pointer
+    }
+
+    .bc-cta-btn:hover {
+      transform: scale(1.05)
+    }
+
+    .bc-cta-btn svg {
+      width: 20px;
+      height: 20px
+    }
+
+    .bc.feat .bc-cta-btn {
+      background: rgba(255, 255, 255, .2);
+      color: #fff
+    }
+
+    .bc.feat .bc-cta-btn:hover {
+      background: rgba(255, 255, 255, .3)
+    }
+
+    /* HORIZONTAL ACCORDION — Platform-style services */
+    .ha-header {
+      margin-left: calc(-50vw + 50%);
+      margin-right: calc(-50vw + 50%);
+      padding: 0 1.5rem
+    }
+
+    .ha-wrap {
+      display: flex;
+      gap: .5rem;
+      height: 85vh;
+      min-height: 550px;
+      max-height: 800px
+    }
+
+    .ha-card {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-md);
+      flex: 0 0 140px;
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition: flex .5s cubic-bezier(0.2, 0.8, 0.2, 1), background .3s, border-color .3s, opacity .8s ease-out, transform .8s ease-out;
+      overflow: hidden;
+      position: relative
+    }
+
+    .ha-card.ha-active {
+      flex: 1;
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      cursor: default
+    }
+
+    .ha-num {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      white-space: nowrap
+    }
+
+    .ha-num svg {
+      opacity: .5;
+      flex-shrink: 0;
+      transition: transform .4s ease
+    }
+
+    .ha-card.ha-active .ha-num {
+      color: rgba(255, 255, 255, .3)
+    }
+
+    .ha-card.ha-active .ha-num svg {
+      opacity: .4;
+      transform: rotate(180deg)
+    }
+
+    .ha-line {
+      width: 50px;
+      height: 1px;
+      background: var(--color-border-light);
+      margin: 1rem 0
+    }
+
+    .ha-card.ha-active .ha-line {
+      background: rgba(255, 255, 255, .25)
+    }
+
+    .ha-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .ha-card:not(.ha-active) .ha-title {
+      display: none
+    }
+
+    .ha-desc {
+      font-size: .8rem;
+      color: rgba(255, 255, 255, .75);
+      line-height: 1.5;
+      margin-top: .5rem;
+      display: none
+    }
+
+    .ha-card.ha-active .ha-desc {
+      display: block
+    }
+
+    .ha-img-wrap {
+      position: relative;
+      flex: 1;
+      margin-top: 1rem;
+      border-radius: var(--r-sm);
+      overflow: hidden;
+      display: none
+    }
+
+    .ha-card.ha-active .ha-img-wrap {
+      display: block
+    }
+
+    .ha-img {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #ccc 0%, #999 100%);
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-size: .75rem
+    }
+
+    .ha-footer {
+      display: none;
+      align-items: center;
+      gap: .5rem;
+      margin-top: 1rem;
+      font-size: .8rem;
+      color: rgba(255, 255, 255, .6)
+    }
+
+    .ha-footer svg {
+      opacity: .5
+    }
+
+    .ha-card.ha-active .ha-footer {
+      display: flex
+    }
+
+    .ha-category {
+      font-size: .75rem;
+      color: var(--color-text-tertiary);
+      margin-top: auto;
+      padding-top: 1rem
+    }
+
+    .ha-card.ha-active .ha-category {
+      display: none
+    }
+
+    @keyframes smoothOpenContent {
+      0% {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      30% {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .ha-card.ha-active .ha-title,
+    .ha-card.ha-active .ha-desc,
+    .ha-card.ha-active .ha-footer,
+    .ha-card[data-ha]:not([data-ha="0"]).ha-active .ha-img-wrap {
+      animation: smoothOpenContent 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    /* Detail panel (right) */
+    .ha-detail {
+      flex: 0 0 320px;
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-md);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between
+    }
+
+    .ha-detail-tag {
+      font-size: .7rem;
+      color: var(--color-text-secondary);
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: .8rem;
+      border-bottom: 1px solid var(--color-border)
+    }
+
+    .ha-detail-title {
+      font-size: clamp(1.3rem, 2vw, 1.8rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-top: 1.5rem
+    }
+
+    .ha-detail-text {
+      font-size: .8rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+      margin-top: 1rem
+    }
+
+    .ha-detail-dots {
+      flex: 1;
+      margin-top: 1.5rem;
+      background-image: radial-gradient(var(--color-text-tertiary) 1.5px, transparent 1.5px);
+      background-size: 32px 32px;
+      background-position: center;
+      border-radius: var(--r-sm);
+      position: relative;
+      overflow: hidden
+    }
+
+
+    .ha-detail-footer {
+      font-size: .75rem;
+      color: var(--color-text-tertiary);
+      margin-top: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem
+    }
+
+    @media(max-width:1024px) {
+      .ha-wrap {
+        flex-direction: column;
+        height: auto
+      }
+
+      .ha-card {
+        flex: 0 0 auto !important
+      }
+
+      .ha-card:not(.ha-active) {
+        padding: 1rem 1.5rem;
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem
+      }
+
+      .ha-card:not(.ha-active) .ha-num {
+        font-size: 1.5rem
+      }
+
+      .ha-card:not(.ha-active) .ha-line {
+        display: none
+      }
+
+      .ha-card:not(.ha-active) .ha-category {
+        margin-top: 0;
+        padding-top: 0
+      }
+
+      .ha-detail {
+        flex: 0 0 auto
+      }
+    }
+
+    /* SERVICES TABS (legacy — kept for fallback) */
+    .sv-g {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem
+    }
+
+    .sv-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem
+    }
+
+    .sv-tab {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-md);
+      padding: 1.2rem 1.5rem;
+      cursor: pointer;
+      transition: all .3s
+    }
+
+    .sv-tab.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary)
+    }
+
+    .sv-tab-n {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      margin-bottom: .4rem
+    }
+
+    .sv-tab.active .sv-tab-n {
+      color: rgba(255, 255, 255, .7)
+    }
+
+    .sv-tab-t {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: .3rem
+    }
+
+    .sv-tab-d {
+      font-size: .8rem;
+      color: var(--color-text-secondary);
+      line-height: 1.5;
+      display: none
+    }
+
+    .sv-tab.active .sv-tab-d {
+      display: block;
+      color: rgba(255, 255, 255, .8)
+    }
+
+    .sv-det {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-md);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between
+    }
+
+    .sv-det-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--color-text-secondary);
+      margin-bottom: 1.5rem
+    }
+
+    .sv-det-tt {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      line-height: 1.3
+    }
+
+    .sv-det-tx {
+      font-size: .85rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      margin-bottom: 2rem
+    }
+
+    .sv-det-img {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, #1a1a1a, #222);
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-tertiary);
+      font-size: .75rem
+    }
+
+    /* REPORTS ANIMATED STACK UI */
+    .rp-stack {
+      display: flex;
+      flex-direction: column;
+      padding: 0.5rem 1rem 0.5rem 0;
+      height: 100%;
+      justify-content: center;
+    }
+
+    .rp-card {
+      background: #111;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: -0.8rem;
+      box-shadow: 0 -8px 16px rgba(0, 0, 0, 0.6);
+      transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s, border-color 0.3s;
+      cursor: pointer;
+      position: relative;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .rp-card:first-child {
+      margin-top: 0;
+    }
+
+    .rp-card:nth-child(1) {
+      z-index: 6;
+    }
+
+    .rp-card:nth-child(2) {
+      z-index: 5;
+    }
+
+    .rp-card:nth-child(3) {
+      z-index: 4;
+    }
+
+    .rp-card:nth-child(4) {
+      z-index: 3;
+    }
+
+    .rp-card:nth-child(5) {
+      z-index: 2;
+    }
+
+    .rp-card:nth-child(6) {
+      z-index: 1;
+    }
+
+    .rp-card:hover {
+      transform: translateX(12px) scale(1.02);
+      background: #1a1a1c;
+      border-color: rgba(255, 68, 51, 0.3);
+      z-index: 10 !important;
+    }
+
+    .rp-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #E84D4D;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px rgba(232, 77, 77, 0.4);
+      transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
+    }
+
+    .rp-text {
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #888;
+      transition: color 0.3s;
+    }
+
+    .rp-card:hover .rp-text {
+      color: #fff;
+    }
+
+    .rp-card:hover .rp-dot {
+      transform: scale(1.2);
+      background: #FF6666;
+      box-shadow: 0 0 12px rgba(255, 102, 102, 0.8);
+    }
+
+    @keyframes slideStackIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .ha-card.ha-active .rp-card {
+      animation: slideStackIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .ha-card.ha-active .rp-card:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .ha-card.ha-active .rp-card:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .ha-card.ha-active .rp-card:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .ha-card.ha-active .rp-card:nth-child(4) {
+      animation-delay: 0.25s;
+    }
+
+    .ha-card.ha-active .rp-card:nth-child(5) {
+      animation-delay: 0.3s;
+    }
+
+    .ha-card.ha-active .rp-card:nth-child(6) {
+      animation-delay: 0.35s;
+    }
+
+    /* CONVEYOR BELT UI */
+    .conveyor-wrap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      background: #050505;
+    }
+
+    .conveyor-fade {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      box-shadow: inset 32px 0 16px -8px #0A0A0A, inset -32px 0 16px -8px #0A0A0A, inset 0 32px 16px -8px #0A0A0A, inset 0 -32px 16px -8px #0A0A0A;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .conveyor-belt {
+      display: flex;
+      gap: 1rem;
+      width: max-content;
+      height: 100%;
+      align-items: center;
+      animation: scrollConveyor 24s linear infinite;
+    }
+
+    .conveyor-track {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .conveyor-item {
+      width: 200px;
+      height: 250px;
+      border-radius: 6px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      filter: drop-shadow(0 100px 1px rgba(0, 0, 0, 0.8));
+    }
+
+    @keyframes scrollConveyor {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(calc(-50% - 0.5rem));
+      }
+    }
+
+    /* PROCESS — 3-column layout matching Platform */
+    .proc-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr auto;
+      gap: .75rem;
+      height: 85vh;
+      min-height: 550px;
+      max-height: 800px
+    }
+
+    .proc-image {
+      background: #000;
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-md);
+      overflow: hidden;
+      position: relative
+    }
+
+    .proc-img-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative
+    }
+
+    /* SVG SCENES */
+    .proc-scene {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity .5s ease;
+      pointer-events: none
+    }
+
+    .proc-scene.proc-scene-active {
+      opacity: 1;
+      pointer-events: auto
+    }
+
+    .proc-scene svg {
+      width: 85%;
+      height: 85%;
+      overflow: visible
+    }
+
+    /* Scroll-triggered animation classes */
+    .proc-scene .anim-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .6s ease, transform .6s ease
+    }
+
+    .proc-scene.proc-scene-active .anim-in {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    .proc-scene .anim-scale {
+      transform: scale(0);
+      transition: transform .7s cubic-bezier(.34,1.56,.64,1)
+    }
+
+    .proc-scene.proc-scene-active .anim-scale {
+      transform: scale(1)
+    }
+
+    .proc-scene .anim-draw {
+      stroke-dashoffset: var(--dash-len, 200);
+      stroke-dasharray: var(--dash-len, 200);
+      transition: stroke-dashoffset 1.2s ease
+    }
+
+    .proc-scene.proc-scene-active .anim-draw {
+      stroke-dashoffset: 0
+    }
+
+    .proc-scene .anim-fade {
+      opacity: 0;
+      transition: opacity .8s ease
+    }
+
+    .proc-scene.proc-scene-active .anim-fade {
+      opacity: 1
+    }
+
+    /* stagger delays */
+    .d1 { transition-delay: .1s !important }
+    .d2 { transition-delay: .2s !important }
+    .d3 { transition-delay: .3s !important }
+    .d4 { transition-delay: .4s !important }
+    .d5 { transition-delay: .5s !important }
+    .d6 { transition-delay: .6s !important }
+    .d7 { transition-delay: .7s !important }
+    .d8 { transition-delay: .8s !important }
+    .d9 { transition-delay: .9s !important }
+    .d10 { transition-delay: 1s !important }
+
+    /* pulse animation for nodes */
+    @keyframes nodePulse {
+      0%, 100% { r: 4 }
+      50% { r: 6 }
+    }
+
+    .proc-scene.proc-scene-active .pulse-node {
+      animation: nodePulse 2s ease-in-out infinite
+    }
+
+    /* rotating scanner */
+    @keyframes scanRotate {
+      from { transform: rotate(0deg) }
+      to { transform: rotate(360deg) }
+    }
+
+    .proc-scene.proc-scene-active .scan-rotate {
+      animation: scanRotate 8s linear infinite;
+      transform-origin: center
+    }
+
+    /* data stream flow */
+    @keyframes dataFlow {
+      from { stroke-dashoffset: 20 }
+      to { stroke-dashoffset: 0 }
+    }
+
+    .proc-scene.proc-scene-active .data-flow {
+      stroke-dasharray: 4 6;
+      animation: dataFlow .8s linear infinite
+    }
+
+    /* progress bar fill */
+    @keyframes progressFill {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    .proc-scene.proc-scene-active .bar-fill {
+      animation: progressFill 1.5s ease-out forwards;
+      animation-delay: .5s
+    }
+
+    /* floating */
+    @keyframes gentleFloat {
+      0%, 100% { transform: translateY(0) }
+      50% { transform: translateY(-6px) }
+    }
+
+    .proc-scene.proc-scene-active .float-el {
+      animation: gentleFloat 3s ease-in-out infinite
+    }
+
+    .proc-content {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem
+    }
+
+    .proc-header {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-md);
+      padding: 1.5rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between
+    }
+
+    .proc-label {
+      font-size: 1rem;
+      color: var(--color-text-secondary);
+      font-weight: 400
+    }
+
+    .proc-dots-nav {
+      display: flex;
+      gap: 6px
+    }
+
+    .proc-arrows {
+      display: flex;
+      gap: .5rem
+    }
+
+    .proc-slides {
+      position: relative;
+      flex: 1;
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-md);
+      padding: 2.5rem
+    }
+
+    .proc-slide {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%
+    }
+
+    .proc-slide.proc-slide-active {
+      display: flex
+    }
+
+    .proc-slide h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem
+    }
+
+    .proc-slide p {
+      font-size: .9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      max-width: 550px
+    }
+
+    .proc-stat {
+      margin-top: auto;
+      padding-top: 2rem
+    }
+
+    .proc-stat-val {
+      font-size: 3rem;
+      font-weight: 300;
+      color: var(--color-text-secondary)
+    }
+
+    .proc-stat-label {
+      font-size: .75rem;
+      color: var(--color-text-tertiary);
+      margin-top: .3rem
+    }
+
+    .proc-cta-col {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-md);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 200px
+    }
+
+    @media(max-width:1024px) {
+      .proc-wrap {
+        grid-template-columns: 1fr;
+        height: auto
+      }
+
+      .proc-image {
+        height: 300px
+      }
+
+      .proc-cta-col {
+        flex-direction: row;
+        gap: 1rem;
+        justify-content: flex-start
+      }
+    }
+
+    /* PROCESS CAROUSEL (legacy) */
+    .pc {
+      position: relative;
+      overflow: hidden
+    }
+
+    .pc-slides {
+      display: flex;
+      transition: transform .5s ease-out
+    }
+
+    .pc-slide {
+      min-width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center
+    }
+
+    .pc-vis {
+      width: 100%;
+      height: 340px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2a1a0a 40%, #1a1a1a 100%);
+      border-radius: var(--r-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-tertiary);
+      font-size: .85rem
+    }
+
+    .pc-ct h3 {
+      font-size: .8rem;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: .8rem
+    }
+
+    .pc-ct h4 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      margin-bottom: 1rem
+    }
+
+    .pc-ct p {
+      font-size: .9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      margin-bottom: 2rem
+    }
+
+    .pc-nav {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem
+    }
+
+    .pc-dots {
+      display: flex;
+      gap: 6px
+    }
+
+    .pc-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-border-light);
+      transition: all .3s;
+      cursor: pointer
+    }
+
+    .pc-dot.active {
+      width: 24px;
+      border-radius: 4px;
+      background: var(--color-primary)
+    }
+
+    .pc-arr {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--color-border-light);
+      background: none;
+      color: var(--color-text-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color .3s
+    }
+
+    .pc-arr:hover {
+      border-color: var(--color-primary)
+    }
+
+    /* PERFORMANCE BENTO GRID */
+    .bento-row {
+      display: grid;
+      gap: 1rem;
+      margin-bottom: 1rem
+    }
+
+    .bento-row-1 {
+      grid-template-columns: 1.2fr .8fr 1fr
+    }
+
+    .bento-row-2 {
+      grid-template-columns: .8fr 1fr 1.2fr .5fr
+    }
+
+    @media(max-width:1024px) {
+      .bento-row-1 {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .bento-row-1 .bc:first-child {
+        grid-column: 1 / -1
+      }
+
+      .bento-row-2 {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    @media(max-width:640px) {
+
+      .bento-row-1,
+      .bento-row-2 {
+        grid-template-columns: 1fr
+      }
+
+      .bento-row-1 .bc:first-child {
+        grid-column: auto
+      }
+    }
+
+    /* BENTO CARD BASE */
+    .bc {
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-md);
+      padding: 1.5rem;
+      overflow: hidden;
+      position: relative
+    }
+
+    .bc-tag {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: .75rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem
+    }
+
+    .bc-tag span:first-child {
+      color: var(--color-primary);
+      font-weight: 600
+    }
+
+    .bc-tag span:last-child {
+      color: var(--color-text-secondary)
+    }
+
+    .bc-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: .25rem
+    }
+
+    .bc-sub {
+      font-size: .75rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 1.25rem
+    }
+
+    /* METRIC VALUES */
+    .mc-v {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      margin-bottom: .3rem;
+      font-variant-numeric: tabular-nums
+    }
+
+    .mc-v .ac {
+      color: var(--color-primary)
+    }
+
+    .mc-l {
+      font-size: .75rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: .06em
+    }
+
+    /* DONUT CHART */
+    .donut-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.25rem
+    }
+
+    .donut-svg {
+      width: 140px;
+      height: 140px;
+      transform: rotate(-90deg)
+    }
+
+    .donut-ring {
+      fill: none;
+      stroke: var(--color-border);
+      stroke-width: 18
+    }
+
+    .donut-seg {
+      fill: none;
+      stroke-width: 18;
+      stroke-linecap: butt;
+      transition: stroke-dasharray 1.2s ease-out
+    }
+
+    .donut-stats {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem
+    }
+
+    .donut-stat {
+      text-align: center
+    }
+
+    .donut-stat-v {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--color-text-primary)
+    }
+
+    .donut-stat-l {
+      font-size: .65rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: .04em
+    }
+
+    .donut-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: .35rem
+    }
+
+    /* GAUGE INDICATORS */
+    .gauge-row {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 1rem
+    }
+
+    .gauge-item {
+      text-align: center
+    }
+
+    .gauge-label {
+      font-size: .75rem;
+      color: var(--color-text-secondary);
+      margin-bottom: .15rem
+    }
+
+    .gauge-tz {
+      font-size: .6rem;
+      color: var(--color-text-tertiary);
+      margin-bottom: .5rem
+    }
+
+    .gauge-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 1px solid var(--color-border-light);
+      margin: 0 auto .5rem;
+      position: relative;
+      background: var(--color-bg)
+    }
+
+    .gauge-hand {
+      position: absolute;
+      width: 2px;
+      height: 24px;
+      background: var(--color-text-primary);
+      left: 50%;
+      bottom: 50%;
+      transform-origin: bottom center;
+      transform: translateX(-50%) rotate(0deg);
+      border-radius: 1px;
+      transition: transform 1.2s ease-out
+    }
+
+    .gauge-hand-s {
+      height: 18px;
+      background: var(--color-text-secondary);
+      opacity: .5
+    }
+
+    .gauge-dots {
+      display: flex;
+      justify-content: center;
+      gap: 3px;
+      margin-bottom: .35rem
+    }
+
+    .gauge-dots span {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--color-primary)
+    }
+
+    .gauge-dots span.off {
+      background: var(--color-text-tertiary)
+    }
+
+    .gauge-status {
+      font-size: .7rem;
+      font-weight: 600;
+      color: var(--color-text-primary)
+    }
+
+    .gauge-ms {
+      font-size: .6rem;
+      color: var(--color-text-secondary)
+    }
+
+    .gauge-footer {
+      text-align: center;
+      margin-top: .75rem
+    }
+
+    .gauge-footer-badge {
+      display: inline-block;
+      font-size: .65rem;
+      padding: .3rem .75rem;
+      border: 1px solid var(--color-border-light);
+      border-radius: 20px;
+      color: var(--color-text-secondary);
+      margin-bottom: .5rem
+    }
+
+    .gauge-footer-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-primary)
+    }
+
+    /* BAR CHART (mini) */
+    .mb {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 80px
+    }
+
+    .mb-b {
+      flex: 1;
+      background: var(--color-primary);
+      border-radius: 2px 2px 0 0;
+      transition: height 1s ease-out;
+      height: 0
+    }
+
+    /* LINE CHART */
+    .lc-wrap {
+      position: relative;
+      height: 100px;
+      margin-bottom: 1rem
+    }
+
+    .lc-svg {
+      width: 100%;
+      height: 100%
+    }
+
+    .lc-line {
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round
+    }
+
+    .lc-line-primary {
+      stroke: var(--color-primary)
+    }
+
+    .lc-line-secondary {
+      stroke: var(--color-text-tertiary)
+    }
+
+    .lc-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: .6rem;
+      color: var(--color-text-tertiary)
+    }
+
+    .lc-stats {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: .75rem
+    }
+
+    .lc-stat {
+      text-align: center
+    }
+
+    .lc-stat-v {
+      font-size: 1.3rem;
+      font-weight: 700
+    }
+
+    .lc-stat-l {
+      font-size: .6rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: .04em
+    }
+
+    .lc-stat-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-top: .25rem
+    }
+
+    /* EVOLUTION BARS */
+    .evo-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 120px;
+      margin-bottom: .75rem
+    }
+
+    .evo-bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%
+    }
+
+    .evo-bar {
+      width: 100%;
+      background: var(--color-border);
+      border-radius: 4px 4px 0 0;
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: flex-end
+    }
+
+    .evo-bar-fill {
+      width: 100%;
+      background: var(--color-primary);
+      border-radius: 4px 4px 0 0;
+      transition: height 1.2s ease-out;
+      height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .evo-bar-val {
+      font-size: .7rem;
+      font-weight: 700;
+      color: #fff
+    }
+
+    .evo-bar-label {
+      font-size: .6rem;
+      color: var(--color-text-secondary);
+      margin-top: .4rem;
+      white-space: nowrap
+    }
+
+    .evo-score {
+      text-align: right;
+      margin-bottom: 1rem
+    }
+
+    .evo-score-label {
+      font-size: .65rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: .04em
+    }
+
+    .evo-score-v {
+      font-size: 2rem;
+      font-weight: 800
+    }
+
+    .evo-score-v span {
+      color: var(--color-primary)
+    }
+
+    .evo-score-v small {
+      font-size: 1rem;
+      color: var(--color-text-tertiary);
+      font-weight: 400
+    }
+
+    /* SMALL SIDE CARD */
+    .bc-sm {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between
+    }
+
+    .bc-sm-stat {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--color-text-primary);
+      line-height: 1
+    }
+
+    .bc-sm-label {
+      font-size: .65rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: .04em
+    }
+
+    .bc-sm-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--color-border);
+      border-radius: var(--r-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-secondary)
+    }
+
+    /* NEWS TICKER */
+    .news-ticker {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding: 1rem 0;
+      margin-top: 1rem;
+      border-top: 1px solid var(--color-border);
+      overflow: hidden;
+      white-space: nowrap
+    }
+
+    .news-ticker-inner {
+      display: flex;
+      gap: 3rem;
+      animation: tickerScroll 20s linear infinite
+    }
+
+    .news-ticker-item {
+      font-size: .85rem;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      flex-shrink: 0
+    }
+
+    .news-ticker-item strong {
+      color: var(--color-text-primary)
+    }
+
+    @keyframes tickerScroll {
+      0% {
+        transform: translateX(0)
+      }
+
+      100% {
+        transform: translateX(-50%)
+      }
+    }
+
+    /* HERO CARD VISUAL */
+    .bc-hero-visual {
+      height: 180px;
+      background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      border-radius: var(--r-sm);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden
+    }
+
+    .bc-hero-visual::before {
+      content: '';
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232, 87, 58, .15) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%)
+    }
+
+    .bc-hero-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 3px;
+      width: 80%;
+      opacity: .6
+    }
+
+    .bc-hero-grid span {
+      height: 28px;
+      background: var(--color-primary);
+      border-radius: 2px;
+      opacity: .3
+    }
+
+    .bc-hero-grid span:nth-child(3n) {
+      opacity: .6
+    }
+
+    .bc-hero-grid span:nth-child(5n) {
+      opacity: .8
+    }
+
+    .bc-hero-brand {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: .04em
+    }
+
+    /* MARQUEE */
+    .mq-s {
+      background: var(--color-primary);
+      padding: 3rem 0;
+      overflow: hidden
+    }
+
+    .mq-r {
+      display: flex;
+      white-space: nowrap;
+      animation: mqsc 25s linear infinite;
+      margin-bottom: .5rem
+    }
+
+    .mq-r:nth-child(2) {
+      animation-direction: reverse;
+      animation-duration: 30s
+    }
+
+    .mq-r:nth-child(3) {
+      animation-duration: 22s
+    }
+
+    .mq-i {
+      display: inline-flex;
+      align-items: center;
+      gap: 2rem;
+      padding: 0 2rem;
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -.02em
+    }
+
+    .mq-i .tl {
+      font-weight: 400;
+      font-size: clamp(.8rem, 1.2vw, 1rem);
+      opacity: .7
+    }
+
+    .mq-i .sp {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .4);
+      flex-shrink: 0
+    }
+
+    @keyframes mqsc {
+      0% {
+        transform: translateX(0)
+      }
+
+      100% {
+        transform: translateX(-50%)
+      }
+    }
+
+    /* TICKER */
+    .tk-s {
+      border-top: 1px solid var(--color-border);
+      border-bottom: 1px solid var(--color-border);
+      padding: 1rem 0;
+      overflow: hidden
+    }
+
+    .tk-t {
+      display: flex;
+      white-space: nowrap;
+      animation: mqsc 30s linear infinite
+    }
+
+    .tk-i {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 0 2rem;
+      font-size: .85rem;
+      color: var(--color-text-secondary)
+    }
+
+    .tk-i strong {
+      color: var(--color-text-primary);
+      font-weight: 700
+    }
+
+    .tk-i .sp {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--color-border-light)
+    }
+
+    /* ACCORDION */
+    .ac-item {
+      border-bottom: 1px solid var(--color-border);
+      overflow: hidden
+    }
+
+    .ac-trig {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 0;
+      background: none;
+      border: none;
+      color: var(--color-text-primary);
+      font-family: var(--font);
+      font-size: 1.05rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+      transition: color .3s
+    }
+
+    .ac-trig:hover {
+      color: var(--color-primary)
+    }
+
+    .ac-icon {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-shrink: 0
+    }
+
+    .ac-icon span {
+      display: block;
+      width: 18px;
+      height: 2px;
+      background: var(--color-primary);
+      border-radius: 1px;
+      transition: transform .3s
+    }
+
+    .ac-item.open .ac-icon span:last-child {
+      transform: rotate(90deg) translateX(-3px)
+    }
+
+    .ac-ct {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .4s ease-out
+    }
+
+    .ac-ct-in {
+      padding: 0 0 1.5rem;
+      font-size: .9rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      max-width: 700px
+    }
+
+    /* FAQ LAYOUT */
+    .faq-ly {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 3rem
+    }
+
+    .faq-sb {
+      position: sticky;
+      top: 120px;
+      align-self: start
+    }
+
+    .faq-sb-img {
+      width: 100%;
+      height: 250px;
+      background: linear-gradient(135deg, #1a1a1a, #222);
+      border-radius: var(--r-md);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-tertiary);
+      font-size: .75rem
+    }
+
+    .faq-sb h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: .8rem
+    }
+
+    .faq-sb p {
+      font-size: .85rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7;
+      margin-bottom: 1.5rem
+    }
+
+    /* CTA SECTION */
+    .cta-s {
+      padding: var(--sec-pad) 0
+    }
+
+    .cta-mh {
+      font-size: clamp(4rem, 10vw, 10rem);
+      font-weight: 900;
+      color: var(--color-primary);
+      letter-spacing: -.04em;
+      line-height: .95;
+      margin-bottom: 4rem
+    }
+
+    .cta-g {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem
+    }
+
+    .cta-inf h4 {
+      font-size: .85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      margin-top: 2rem
+    }
+
+    .cta-inf h4:first-child {
+      margin-top: 0
+    }
+
+    .cta-inf p,
+    .cta-inf a {
+      font-size: .85rem;
+      color: var(--color-text-secondary);
+      line-height: 1.7
+    }
+
+    .cta-inf a:hover {
+      color: var(--color-primary)
+    }
+
+    .cta-soc {
+      display: flex;
+      gap: .8rem;
+      margin-top: .5rem
+    }
+
+    .cta-soc a {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--color-border-light);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .7rem;
+      color: var(--color-text-secondary);
+      transition: border-color .3s, color .3s
+    }
+
+    .cta-soc a:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary)
+    }
+
+    .cta-fm h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: .5rem
+    }
+
+    .cta-fm>p {
+      font-size: .85rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 2rem
+    }
+
+    .ff {
+      width: 100%;
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-sm);
+      padding: .9rem 1rem;
+      color: var(--color-text-primary);
+      font-family: var(--font);
+      font-size: .85rem;
+      margin-bottom: .75rem;
+      outline: none;
+      transition: border-color .3s
+    }
+
+    .ff:focus {
+      border-color: var(--color-primary)
+    }
+
+    textarea.ff {
+      resize: vertical;
+      min-height: 120px
+    }
+
+    .f-legal {
+      font-size: .75rem;
+      color: var(--color-text-tertiary);
+      margin-top: 1rem
+    }
+
+    .f-legal a {
+      color: var(--color-primary)
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--color-border);
+      padding: 5rem 0 2rem
+    }
+
+    .ft-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 4rem
+    }
+
+    .ft-brand .rb {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 1.5rem;
+      animation: br 18s linear infinite
+    }
+
+    @keyframes br {
+      0% {
+        transform: rotate(0)
+      }
+
+      100% {
+        transform: rotate(360deg)
+      }
+    }
+
+    .ft-bn {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      margin-bottom: .5rem
+    }
+
+    .ft-bn span {
+      color: var(--color-primary)
+    }
+
+    .ft-brand>p {
+      font-size: .85rem;
+      color: var(--color-text-secondary);
+      line-height: 1.6
+    }
+
+    .ft-nav h5 {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--color-text-secondary);
+      margin-bottom: 1.2rem
+    }
+
+    .ft-nav ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .7rem
+    }
+
+    .ft-nav a {
+      font-size: .85rem;
+      color: var(--color-text-secondary);
+      transition: color .3s
+    }
+
+    .ft-nav a:hover {
+      color: var(--color-text-primary)
+    }
+
+    .ft-nl h5 {
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--color-text-secondary);
+      margin-bottom: .5rem
+    }
+
+    .ft-nl>p {
+      font-size: .85rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 1.2rem;
+      line-height: 1.5
+    }
+
+    .nl-f {
+      display: flex;
+      gap: .5rem
+    }
+
+    .nl-f input {
+      flex: 1;
+      background: var(--color-bg-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--r-sm);
+      padding: .7rem 1rem;
+      color: var(--color-text-primary);
+      font-family: var(--font);
+      font-size: .85rem;
+      outline: none
+    }
+
+    .nl-f input:focus {
+      border-color: var(--color-primary)
+    }
+
+    .ft-bot {
+      border-top: 1px solid var(--color-border);
+      padding-top: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .75rem;
+      color: var(--color-text-tertiary)
+    }
+
+    /* RESPONSIVE */
+    @media(max-width:1024px) {
+      .hero-ct {
+        grid-template-columns: 1fr
+      }
+
+      .hero-r {
+        display: none
+      }
+
+      .hero-l {
+        padding-left: 0
+      }
+
+      .float-shapes {
+        display: none
+      }
+
+      .sh {
+        grid-template-columns: 1fr;
+        gap: 1rem
+      }
+
+      .bg {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .bc.sp2 {
+        grid-column: span 1
+      }
+
+      .sv-g {
+        grid-template-columns: 1fr
+      }
+
+      .pc-slide {
+        grid-template-columns: 1fr
+      }
+
+      .mg {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .faq-ly {
+        grid-template-columns: 1fr
+      }
+
+      .faq-sb {
+        position: static
+      }
+
+      .cta-g {
+        grid-template-columns: 1fr
+      }
+
+      .ft-top {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    @media(max-width:640px) {
+      :root {
+        --sec-pad: 80px
+      }
+
+      nav {
+        padding: 1rem 1.5rem
+      }
+
+      .sc {
+        padding: 0 1.5rem
+      }
+
+      .hero-ct {
+        padding: 0 1.5rem;
+        padding-top: 5rem
+      }
+
+      .h-stats {
+        flex-direction: column;
+        gap: 1.5rem
+      }
+
+      .bg {
+        grid-template-columns: 1fr
+      }
+
+      .mg {
+        grid-template-columns: 1fr
+      }
+
+      .ft-top {
+        grid-template-columns: 1fr
+      }
+
+      .cta-mh {
+        font-size: clamp(2.5rem, 12vw, 5rem)
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="mobile.css" media="(max-width:768px)">
+</head>
+
+<body>
+
+  <div id="loader"></div>
+  <div class="spb" id="spb"></div>
+
+  <nav id="mn">
+    <a href="https://atlas10x.com/" class="n-logo">Atlas<span>10X</span></a>
+  </nav>
+
+  <!-- Particle canvas — fixed behind everything -->
+  <canvas id="hc"></canvas>
+
+  <!-- HERO + TRANSITION -->
+  <div class="hero-particle-wrap" id="hpw">
+    <section class="hero" id="hero">
+      <div class="hero-ct">
+        <div class="hero-l">
+          <h1 class="h-hl rv rv-d1">
+            <span style="white-space: nowrap;">— The smarter way</span><br>
+            <span style="white-space: nowrap;">to <span class="ac">discover, analyze,</span></span><br>
+            <span style="white-space: nowrap;">and <span class="ac">create</span> winning</span><br>
+            <span style="white-space: nowrap;">ads.</span>
+          </h1>
+          <div class="h-acts rv rv-d2">
+            <div class="h-acts-text">See Atlas in action<span>Join our guided tour and explore all features live.</span>
+            </div>
+            <div class="h-acts-line"></div>
+            <div
+              style="display:flex; width: 100%; max-width: 460px; background: var(--color-bg-elevated); border: 1px solid var(--color-border); border-radius: var(--r-md); padding: 0.4rem; transition: border-color 0.3s;"
+              onfocusin="this.style.borderColor='var(--color-primary)'"
+              onfocusout="this.style.borderColor='var(--color-border)'">
+              <input type="url" placeholder="Enter website URL..."
+                style="flex: 1; background: transparent; border: none; outline: none; color: var(--color-text-primary); font-family: var(--font); font-size: 0.95rem; padding: 0.6rem 1rem;">
+              <button class="btn-p"
+                style="border-radius: calc(var(--r-md) - 4px); padding: 0 1.5rem; font-size: 0.95rem; white-space: nowrap;">Analyze
+                URL</button>
+            </div>
+          </div>
+          <div class="h-stats rv rv-d3">
+            <div class="h-stat">
+              <div class="h-stat-v" data-count="97.8" data-suffix="%" data-decimals="1">0</div>
+              <div class="h-stat-l-wrap">
+                <div class="h-stat-l">Uptime</div>
+                <div class="h-stat-l-sub">30-day monitoring</div>
+              </div>
+            </div>
+            <div class="h-stat">
+              <div class="h-stat-v" data-count="31.2" data-suffix="%" data-decimals="1" data-prefix="+">0</div>
+              <div class="h-stat-l-wrap">
+                <div class="h-stat-l">Performance</div>
+                <div class="h-stat-l-sub">AI optimized</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-r">
+          <div class="h-card rv rv-d3">
+            <div class="h-card-img"
+              style="background-image:url('assets/brand/Analyse.png');background-size:cover;background-position:center;color:transparent">
+            </div>
+            <div class="h-card-footer">
+              <div>
+                <div class="h-card-name">Ad Intelligence</div>
+                <div class="h-card-sub">// Competitive Analysis</div>
+              </div><span class="cta-c" style="width:36px;height:36px"><svg viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRANSITION — sequential letter fill driven by scroll -->
+    <section class="trans-s" id="trans-section">
+      <div class="trans-sticky">
+        <div class="trans-inner">
+          <p class="trans-t" id="trans-text"><span class="trans-word">We</span> <span class="trans-word">analyze</span>
+            <span class="trans-word accent-word">every</span> <span class="trans-word accent-word">ad</span> <span
+              class="trans-word">so</span> <span class="trans-word">you</span> <span class="trans-word">can</span> <span
+              class="trans-word">focus</span> <span class="trans-word">on</span> <span
+              class="trans-word">building</span> <span class="trans-word accent-word">great</span> <span
+              class="trans-word accent-word">ones.</span>
+          </p>
+          <div class="float-shapes" id="float-shapes" style="display:none">
+          </div>
+        </div>
+      </div>
+    </section>
+  </div><!-- end hero-particle-wrap -->
+
+  <!-- TICKER -->
+  <div class="tk-s">
+    <div class="tk-t">
+      <div class="tk-i"><strong>2.4M+</strong> Ads in Library <span class="sp"></span></div>
+      <div class="tk-i"><strong>350+</strong> Brands Analyzed <span class="sp"></span></div>
+      <div class="tk-i"><strong>5x</strong> Faster Creative Output <span class="sp"></span></div>
+      <div class="tk-i"><strong>10K+</strong> Competitors Tracked <span class="sp"></span></div>
+      <div class="tk-i"><strong>89%</strong> Time Saved <span class="sp"></span></div>
+      <div class="tk-i"><strong>2.4M+</strong> Ads in Library <span class="sp"></span></div>
+      <div class="tk-i"><strong>350+</strong> Brands Analyzed <span class="sp"></span></div>
+      <div class="tk-i"><strong>5x</strong> Faster Creative Output <span class="sp"></span></div>
+      <div class="tk-i"><strong>10K+</strong> Competitors Tracked <span class="sp"></span></div>
+      <div class="tk-i"><strong>89%</strong> Time Saved <span class="sp"></span></div>
+    </div>
+  </div>
+
+  <!-- CREATIVE DISCOVERY -->
+  <section id="discovery" style="padding-top:0">
+    <div class="sc">
+      <h2 class="sdt rv">Ad Intelligence</h2>
+      <div class="sh" style="margin-bottom:8rem">
+        <div class="sh-label rv">001 / Atlas10X</div>
+        <div class="sh-sub rv rv-d1" style="font-size:clamp(1.6rem,3vw,2.2rem)">The world's smartest ad library. Search
+          by concept, emotion, or visual style — not keywords.</div>
+        <div class="sh-desc rv rv-d2">Every winning ad in your market, analyzed and ready to inspire your next campaign.
+        </div>
+      </div>
+      <!-- ROW 1: Featured card (~65%) + Coral accent card (~35%), ~85vh tall -->
+      <div class="work-row-1 rvs">
+        <div class="work-card work-featured mosaic-card">
+          <div class="work-card-img img-full" style="background-image:url('assets/brand/row_1_feature_card.png')"></div>
+          <div class="mosaic-container"></div>
+          <div class="work-card-title">Semantic Search</div>
+          <div class="work-card-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="bc-cta-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg></div>
+        </div>
+        <div class="work-card work-accent">
+          <div class="work-accent-tag">Product Lineup <span>6/6</span></div>
+          <div class="work-accent-title">Atlas10X Suite<br>Intelligence-Powered<br>Creative Engine</div>
+          <div class="work-accent-text">A complete system of smart tools that transform how teams discover, analyze, and
+            create winning ads.</div>
+          <div class="work-accent-dots"></div>
+          <div class="work-accent-footer"><span>Creative intelligence inside</span></div>
+        </div>
+      </div>
+
+      <!-- ROW 2: 3 equal cards -->
+      <div class="work-row-2 rv">
+        <!-- Hook Library — constellation mind-map -->
+        <div class="work-card work-sm rvs" style="padding:0;overflow:hidden">
+          <div class="work-card-title" style="padding:0;left:1rem;top:.8rem">Hook Library</div>
+          <div class="work-card-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="bc-cta-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg></div>
+          <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:2.5rem 1.5rem 1.5rem">
+            <svg viewBox="0 0 280 300" fill="none" style="width:100%;height:100%">
+              <!-- Connection lines from center to nodes (draw in) -->
+              <line class="anim-draw d2" x1="140" y1="150" x2="72" y2="62" stroke="#E8573A" stroke-width=".8" opacity=".3" style="--dash-len:120"/>
+              <line class="anim-draw d3" x1="140" y1="150" x2="228" y2="72" stroke="#D4A44A" stroke-width=".8" opacity=".3" style="--dash-len:120"/>
+              <line class="anim-draw d4" x1="140" y1="150" x2="52" y2="168" stroke="#4ADE80" stroke-width=".8" opacity=".3" style="--dash-len:80"/>
+              <line class="anim-draw d5" x1="140" y1="150" x2="240" y2="180" stroke="#60A5FA" stroke-width=".8" opacity=".3" style="--dash-len:110"/>
+              <line class="anim-draw d6" x1="140" y1="150" x2="80" y2="260" stroke="#A78BFA" stroke-width=".8" opacity=".3" style="--dash-len:140"/>
+              <line class="anim-draw d6" x1="140" y1="150" x2="210" y2="268" stroke="#F472B6" stroke-width=".8" opacity=".3" style="--dash-len:140"/>
+              <!-- Secondary connections between nodes -->
+              <line class="anim-draw d7" x1="72" y1="62" x2="228" y2="72" stroke="#333" stroke-width=".4" opacity=".2" style="--dash-len:160"/>
+              <line class="anim-draw d8" x1="52" y1="168" x2="80" y2="260" stroke="#333" stroke-width=".4" opacity=".2" style="--dash-len:100"/>
+              <line class="anim-draw d8" x1="240" y1="180" x2="210" y2="268" stroke="#333" stroke-width=".4" opacity=".2" style="--dash-len:95"/>
+              <!-- Data flow particles on lines -->
+              <circle class="anim-fade d5 data-flow" cx="106" cy="106" r="1.5" fill="#E8573A" opacity=".6"/>
+              <circle class="anim-fade d6 data-flow" cx="184" cy="111" r="1.5" fill="#D4A44A" opacity=".6"/>
+              <!-- Center hub — HOOKS -->
+              <circle class="anim-scale d1" cx="140" cy="150" r="28" fill="#111" stroke="#E8573A" stroke-width="1"/>
+              <circle class="anim-scale d2 pulse-node" cx="140" cy="150" r="22" fill="#E8573A" opacity=".08"/>
+              <text class="anim-fade d3" x="140" y="146" text-anchor="middle" fill="#E8573A" font-size="7" font-weight="800" font-family="Inter,sans-serif">HOOKS</text>
+              <text class="anim-fade d4" x="140" y="157" text-anchor="middle" fill="#888" font-size="5" font-family="Inter,sans-serif">1,247</text>
+              <!-- Node: Fear & Urgency (top-left) -->
+              <g class="float-el">
+                <circle class="anim-scale d3" cx="72" cy="62" r="22" fill="#111" stroke="#E8573A" stroke-width=".8"/>
+                <circle class="anim-fade d4" cx="72" cy="62" r="16" fill="#E8573A" opacity=".08"/>
+                <text class="anim-fade d5" x="72" y="58" text-anchor="middle" fill="#E8573A" font-size="10" font-family="Inter,sans-serif">⚡</text>
+                <text class="anim-fade d6" x="72" y="70" text-anchor="middle" fill="#ccc" font-size="4.5" font-weight="600" font-family="Inter,sans-serif">URGENCY</text>
+              </g>
+              <!-- Urgency count badge -->
+              <rect class="anim-scale d7" x="85" y="40" width="22" height="10" rx="5" fill="#E8573A" opacity=".2"/>
+              <text class="anim-fade d8" x="96" y="48" text-anchor="middle" fill="#E8573A" font-size="5" font-weight="700" font-family="Inter,sans-serif">312</text>
+              <!-- Node: Curiosity (top-right) -->
+              <g class="float-el" style="animation-delay:.5s">
+                <circle class="anim-scale d4" cx="228" cy="72" r="24" fill="#111" stroke="#D4A44A" stroke-width=".8"/>
+                <circle class="anim-fade d5" cx="228" cy="72" r="18" fill="#D4A44A" opacity=".08"/>
+                <text class="anim-fade d6" x="228" y="67" text-anchor="middle" fill="#D4A44A" font-size="12" font-family="Inter,sans-serif">?</text>
+                <text class="anim-fade d7" x="228" y="80" text-anchor="middle" fill="#ccc" font-size="4.5" font-weight="600" font-family="Inter,sans-serif">CURIOSITY</text>
+              </g>
+              <!-- Curiosity count badge -->
+              <rect class="anim-scale d8" x="200" y="48" width="22" height="10" rx="5" fill="#D4A44A" opacity=".2"/>
+              <text class="anim-fade d9" x="211" y="56" text-anchor="middle" fill="#D4A44A" font-size="5" font-weight="700" font-family="Inter,sans-serif">284</text>
+              <!-- Node: Social Proof (mid-left) -->
+              <g class="float-el" style="animation-delay:1s">
+                <circle class="anim-scale d5" cx="52" cy="168" r="18" fill="#111" stroke="#4ADE80" stroke-width=".8"/>
+                <circle class="anim-fade d6" cx="52" cy="168" r="13" fill="#4ADE80" opacity=".08"/>
+                <text class="anim-fade d7" x="52" y="165" text-anchor="middle" fill="#4ADE80" font-size="9" font-family="Inter,sans-serif">★</text>
+                <text class="anim-fade d8" x="52" y="176" text-anchor="middle" fill="#ccc" font-size="4" font-weight="600" font-family="Inter,sans-serif">PROOF</text>
+              </g>
+              <!-- Node: Before/After (mid-right) -->
+              <g class="float-el" style="animation-delay:1.5s">
+                <circle class="anim-scale d6" cx="240" cy="180" r="20" fill="#111" stroke="#60A5FA" stroke-width=".8"/>
+                <circle class="anim-fade d7" cx="240" cy="180" r="15" fill="#60A5FA" opacity=".08"/>
+                <text class="anim-fade d8" x="240" y="177" text-anchor="middle" fill="#60A5FA" font-size="9" font-family="Inter,sans-serif">⇄</text>
+                <text class="anim-fade d9" x="240" y="188" text-anchor="middle" fill="#ccc" font-size="4" font-weight="600" font-family="Inter,sans-serif">CONTRAST</text>
+              </g>
+              <!-- Node: Authority (bottom-left) -->
+              <g class="float-el" style="animation-delay:2s">
+                <circle class="anim-scale d7" cx="80" cy="260" r="20" fill="#111" stroke="#A78BFA" stroke-width=".8"/>
+                <circle class="anim-fade d8" cx="80" cy="260" r="15" fill="#A78BFA" opacity=".08"/>
+                <text class="anim-fade d9" x="80" y="257" text-anchor="middle" fill="#A78BFA" font-size="9" font-family="Inter,sans-serif">◆</text>
+                <text class="anim-fade d10" x="80" y="268" text-anchor="middle" fill="#ccc" font-size="4" font-weight="600" font-family="Inter,sans-serif">AUTHORITY</text>
+              </g>
+              <!-- Node: Storytelling (bottom-right) -->
+              <g class="float-el" style="animation-delay:2.5s">
+                <circle class="anim-scale d8" cx="210" cy="268" r="17" fill="#111" stroke="#F472B6" stroke-width=".8"/>
+                <circle class="anim-fade d9" cx="210" cy="268" r="12" fill="#F472B6" opacity=".08"/>
+                <text class="anim-fade d10" x="210" y="265" text-anchor="middle" fill="#F472B6" font-size="8" font-family="Inter,sans-serif">~</text>
+                <text class="anim-fade d10" x="210" y="276" text-anchor="middle" fill="#ccc" font-size="4" font-weight="600" font-family="Inter,sans-serif">STORY</text>
+              </g>
+              <!-- Ambient dots scattered -->
+              <circle class="anim-fade d4" cx="160" cy="40" r="1" fill="#555"/>
+              <circle class="anim-fade d5" cx="25" cy="120" r="1" fill="#555"/>
+              <circle class="anim-fade d6" cx="260" cy="130" r="1" fill="#555"/>
+              <circle class="anim-fade d7" cx="140" cy="280" r="1" fill="#555"/>
+              <circle class="anim-fade d3" cx="30" cy="30" r="1" fill="#444"/>
+              <circle class="anim-fade d8" cx="260" cy="250" r="1" fill="#444"/>
+              <circle class="anim-fade d5" cx="180" cy="230" r="1" fill="#444"/>
+              <circle class="anim-fade d9" cx="110" cy="210" r="1" fill="#444"/>
+            </svg>
+          </div>
+        </div>
+        <div class="work-card work-sm rvs">
+          <div class="work-card-img" style="background-image:url('assets/brand/Row 2 card 2 (Swipe Files).png')"></div>
+          <div class="work-card-title">Swipe Files</div>
+          <div class="work-card-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="bc-cta-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg></div>
+        </div>
+        <div class="work-card work-sm rvs">
+          <div class="work-card-img img-full"
+            style="background-image:url('assets/brand/visual_search.png');background-position:bottom;background-size:92%;background-repeat:no-repeat">
+          </div>
+          <div class="work-card-title">Visual Search</div>
+          <div class="work-card-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="bc-cta-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg></div>
+        </div>
+      </div>
+
+      <!-- ROW 3: 3 equal cards -->
+      <div class="work-row-2 rvs">
+        <div class="work-card work-sm-tall mosaic-card">
+          <div class="work-card-img img-full"
+            style="background-image:url('assets/brand/competitors.png');background-position:center;background-size:110%;background-repeat:no-repeat">
+          </div>
+          <div class="mosaic-container"></div>
+          <div class="work-card-title">Competitor Intel</div>
+          <div class="work-card-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <!-- Ad DNA card -->
+        <div class="work-card work-sm rvs" style="padding:0;overflow:hidden">
+          <div class="work-card-title" style="padding:0;left:1rem;top:.8rem">Ad DNA</div>
+          <div class="work-card-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="bc-cta-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg></div>
+          <div class="dna-card" style="margin-top:2.2rem">
+            <div class="dna-header">
+              <div class="dna-avatar">70</div>
+              <div class="dna-brand"><strong>Riddle Oil</strong><span class="dna-sub">Glossier Inc.</span></div>
+              <div class="dna-nav">‹ › ×</div>
+            </div>
+            <div class="dna-tabs"><span class="dna-tab-active">AD DNA</span><span class="dna-tab">REMIX</span></div>
+            <div class="dna-scores">
+              <div class="dna-score"><span class="dna-score-bar" style="width:62%;background:#E8573A"></span><span
+                  class="dna-score-lbl">HOOK<br>62</span></div>
+              <div class="dna-score"><span class="dna-score-bar" style="width:75%;background:#D4A44A"></span><span
+                  class="dna-score-lbl">EMOTIONAL<br>75</span></div>
+              <div class="dna-score"><span class="dna-score-bar" style="width:85%;background:#4ADE80"></span><span
+                  class="dna-score-lbl">TRUST<br>85</span></div>
+              <div class="dna-score"><span class="dna-score-bar" style="width:72%;background:#60A5FA"></span><span
+                  class="dna-score-lbl">VISUAL<br>72</span></div>
+              <div class="dna-score"><span class="dna-score-bar" style="width:48%;background:#A78BFA"></span><span
+                  class="dna-score-lbl">OFFER<br>48</span></div>
+            </div>
+            <div class="dna-section"><span class="dna-label">STRATEGIC READ</span>
+              <p>Single-customer testimonial → handles 'oily residue' objection, personal skin-shot visual.</p>
+            </div>
+            <div class="dna-row">
+              <div class="dna-cell"><span class="dna-label-sm">HOOK & VALUE</span>
+                <p>"Signature Smell"</p>
+              </div>
+              <div class="dna-cell"><span class="dna-label-sm">VALUE PROP</span>
+                <p>A heavenly scent that locks in without being oily</p>
+              </div>
+            </div>
+            <div class="dna-row">
+              <div class="dna-cell"><span class="dna-label-sm">POSITIONING</span>
+                <div class="dna-pills"><span class="dna-pill">RELIABLE</span><span class="dna-pill">PRODUCT
+                    AWARE</span><span class="dna-pill">MID FUNNEL</span></div>
+              </div>
+              <div class="dna-cell"><span class="dna-label-sm">EMOTIONAL TONE</span>
+                <div class="dna-pills"><span class="dna-pill dna-pill-accent">TRUST</span><span
+                    class="dna-pill dna-pill-accent">APPRECIATION</span></div>
+              </div>
+            </div>
+            <div class="dna-row">
+              <div class="dna-cell"><span class="dna-label-sm">AUDIENCE</span>
+                <p>› review-reading shoppers</p>
+              </div>
+              <div class="dna-cell"><span class="dna-label-sm">PAIN POINTS</span>
+                <p>› greasy skin<br>› short-lived scents</p>
+              </div>
+            </div>
+            <div class="dna-footer"><span class="dna-cta-btn">🛒 shop now</span></div>
+          </div>
+        </div>
+        <!-- Niche Explorer — bubble chart visualization -->
+        <div class="work-card work-sm rvs" style="padding:0;overflow:hidden">
+          <div class="work-card-title" style="padding:0;left:1rem;top:.8rem">Niche Explorer</div>
+          <div class="work-card-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="bc-cta-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg></div>
+          <div style="display:flex;align-items:center;justify-content:center;height:100%;padding:2.5rem 1.5rem 1.5rem">
+            <svg viewBox="0 0 280 300" fill="none" style="width:100%;height:100%">
+              <!-- Skincare — largest bubble (top-center) -->
+              <circle class="anim-scale d1" cx="140" cy="90" r="48" fill="#E8573A" opacity=".06" stroke="#E8573A" stroke-width=".6"/>
+              <circle class="anim-scale d2 pulse-node" cx="140" cy="90" r="38" fill="#E8573A" opacity=".04"/>
+              <text class="anim-fade d3" x="140" y="85" text-anchor="middle" fill="#E8573A" font-size="8" font-weight="700" font-family="Inter,sans-serif">Skincare</text>
+              <text class="anim-fade d4" x="140" y="97" text-anchor="middle" fill="#999" font-size="6" font-family="Inter,sans-serif">12.4k ads</text>
+              <text class="anim-fade d5" x="140" y="108" text-anchor="middle" fill="#4ADE80" font-size="5.5" font-weight="700" font-family="Inter,sans-serif">+18%</text>
+
+              <!-- Fitness — large bubble (left-center) -->
+              <g class="float-el">
+                <circle class="anim-scale d2" cx="58" cy="170" r="40" fill="#60A5FA" opacity=".06" stroke="#60A5FA" stroke-width=".6"/>
+                <circle class="anim-scale d3" cx="58" cy="170" r="30" fill="#60A5FA" opacity=".04"/>
+                <text class="anim-fade d4" x="58" y="166" text-anchor="middle" fill="#60A5FA" font-size="7" font-weight="700" font-family="Inter,sans-serif">Fitness</text>
+                <text class="anim-fade d5" x="58" y="178" text-anchor="middle" fill="#999" font-size="5.5" font-family="Inter,sans-serif">9.8k</text>
+              </g>
+
+              <!-- SaaS — medium bubble (right) -->
+              <g class="float-el" style="animation-delay:.8s">
+                <circle class="anim-scale d3" cx="228" cy="155" r="34" fill="#D4A44A" opacity=".06" stroke="#D4A44A" stroke-width=".6"/>
+                <circle class="anim-scale d4" cx="228" cy="155" r="25" fill="#D4A44A" opacity=".04"/>
+                <text class="anim-fade d5" x="228" y="151" text-anchor="middle" fill="#D4A44A" font-size="7" font-weight="700" font-family="Inter,sans-serif">SaaS</text>
+                <text class="anim-fade d6" x="228" y="163" text-anchor="middle" fill="#999" font-size="5.5" font-family="Inter,sans-serif">7.2k</text>
+              </g>
+
+              <!-- Food & Bev — medium bubble (bottom-center) -->
+              <g class="float-el" style="animation-delay:1.6s">
+                <circle class="anim-scale d4" cx="148" cy="220" r="32" fill="#4ADE80" opacity=".06" stroke="#4ADE80" stroke-width=".6"/>
+                <circle class="anim-scale d5" cx="148" cy="220" r="23" fill="#4ADE80" opacity=".04"/>
+                <text class="anim-fade d6" x="148" y="217" text-anchor="middle" fill="#4ADE80" font-size="6.5" font-weight="700" font-family="Inter,sans-serif">Food</text>
+                <text class="anim-fade d7" x="148" y="228" text-anchor="middle" fill="#999" font-size="5.5" font-family="Inter,sans-serif">6.1k</text>
+              </g>
+
+              <!-- Pet Supplements — small bubble, trending (bottom-left) -->
+              <g class="float-el" style="animation-delay:2.2s">
+                <circle class="anim-scale d5" cx="68" cy="268" r="22" fill="#F472B6" opacity=".06" stroke="#F472B6" stroke-width=".6"/>
+                <circle class="anim-scale d6 pulse-node" cx="68" cy="268" r="15" fill="#F472B6" opacity=".06"/>
+                <text class="anim-fade d7" x="68" y="265" text-anchor="middle" fill="#F472B6" font-size="5.5" font-weight="700" font-family="Inter,sans-serif">Pets</text>
+                <text class="anim-fade d8" x="68" y="275" text-anchor="middle" fill="#999" font-size="4.5" font-family="Inter,sans-serif">3.4k</text>
+              </g>
+              <!-- Trending arrow on Pets -->
+              <path class="anim-draw d9" d="M56 252 L50 244 L58 244" stroke="#4ADE80" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round" style="--dash-len:25"/>
+              <text class="anim-fade d10" x="42" y="240" text-anchor="middle" fill="#4ADE80" font-size="4.5" font-weight="700" font-family="Inter,sans-serif">+47%</text>
+
+              <!-- Fashion — small bubble (top-left) -->
+              <circle class="anim-scale d4" cx="52" cy="68" r="18" fill="#A78BFA" opacity=".06" stroke="#A78BFA" stroke-width=".5"/>
+              <text class="anim-fade d6" x="52" y="66" text-anchor="middle" fill="#A78BFA" font-size="5.5" font-weight="600" font-family="Inter,sans-serif">Fashion</text>
+              <text class="anim-fade d7" x="52" y="75" text-anchor="middle" fill="#999" font-size="4.5" font-family="Inter,sans-serif">4.7k</text>
+
+              <!-- Finance — small bubble (top-right) -->
+              <circle class="anim-scale d5" cx="235" cy="72" r="16" fill="#F59E0B" opacity=".06" stroke="#F59E0B" stroke-width=".5"/>
+              <text class="anim-fade d7" x="235" y="70" text-anchor="middle" fill="#F59E0B" font-size="5" font-weight="600" font-family="Inter,sans-serif">Finance</text>
+              <text class="anim-fade d8" x="235" y="79" text-anchor="middle" fill="#999" font-size="4.5" font-family="Inter,sans-serif">3.9k</text>
+
+              <!-- Education — tiny bubble (far right) -->
+              <circle class="anim-scale d6" cx="260" cy="230" r="12" fill="#38BDF8" opacity=".06" stroke="#38BDF8" stroke-width=".4"/>
+              <text class="anim-fade d8" x="260" y="230" text-anchor="middle" fill="#38BDF8" font-size="4.5" font-weight="600" font-family="Inter,sans-serif">Edu</text>
+
+              <!-- Ambient micro-dots for depth -->
+              <circle class="anim-fade d3" cx="180" cy="42" r="5" fill="#333" opacity=".3"/>
+              <circle class="anim-fade d5" cx="110" cy="158" r="4" fill="#333" opacity=".2"/>
+              <circle class="anim-fade d7" cx="210" cy="270" r="6" fill="#333" opacity=".15"/>
+              <circle class="anim-fade d4" cx="18" cy="240" r="3" fill="#333" opacity=".2"/>
+              <circle class="anim-fade d6" cx="270" cy="110" r="3" fill="#333" opacity=".2"/>
+
+              <!-- Bottom label -->
+              <text class="anim-fade d8" x="140" y="296" text-anchor="middle" fill="#555" font-size="5" font-family="Inter,sans-serif">48 verticals · 2.1M+ ads tracked</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+      <div class="cta-r rv" style="margin-top:6rem">
+        <div class="d-bars">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <a href="https://atlas10x.com/" class="cta-l">Explore the ad library <span class="cta-c"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg></span></a>
+      </div>
+    </div>
+  </section>
+  <div class="s-spacer"></div>
+
+  <!-- CREATIVE INTELLIGENCE -->
+  <section id="intelligence">
+    <div class="sc">
+      <div class="ha-header">
+        <h2 class="sdt rv">Strategic Analysis</h2>
+        <div class="sh">
+          <div class="sh-label rv">002 / Atlas10X</div>
+          <div class="sh-sub rv rv-d1">Automated competitive analysis. Paste a URL, get the full picture.</div>
+          <div class="sh-desc rv rv-d2">Know exactly what your competitors are running, why it works, and how to beat
+            it.</div>
+        </div>
+      </div>
+
+      <!-- Horizontal accordion -->
+      <div class="ha-wrap" id="ha-wrap">
+        <div class="ha-card ha-active mosaic-card rv" data-ha="0" style="transition-delay:0s">
+          <div class="mosaic-container"></div>
+          <div class="ha-num"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M12 5v14M5 12l7 7 7-7" />
+            </svg> 01</div>
+          <div class="ha-line"></div>
+          <div class="ha-title">Visual Execution</div>
+          <div class="ha-desc">Deconstruct the visual science behind every winning ad.</div>
+          <div class="ha-img-wrap ha-scroll-wrap">
+            <div class="rp-card static-tab">
+              <div class="rp-dot"></div>
+              <div class="rp-text">Visual Execution</div>
+            </div>
+            <div class="ha-scroll-content" style="padding-top: 4rem;">
+              <img src="assets/brand/strategic analysis section/card1.png" alt="Visual Analysis Report"
+                class="ha-scroll-img">
+              <img src="assets/brand/strategic analysis section/card1.png" alt="Visual Analysis Report"
+                class="ha-scroll-img">
+            </div>
+            <div class="ha-scroll-mask mask-no-top"></div>
+          </div>
+          <div class="ha-footer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.5">
+              <path d="M3 12h4l3-9 4 18 3-9h4" />
+            </svg> <span>discovery</span></div>
+          <div class="ha-category">discovery</div>
+        </div>
+        <div class="ha-card rv" data-ha="1" style="transition-delay:.15s">
+          <div class="ha-num"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M12 5v14M5 12l7 7 7-7" />
+            </svg> 02</div>
+          <div class="ha-line"></div>
+          <div class="ha-title">Emotional Levers</div>
+          <div class="ha-desc">Identify the psychological triggers driving your market.</div>
+          <div class="ha-img-wrap ha-scroll-wrap">
+            <div class="rp-card static-tab">
+              <div class="rp-dot"></div>
+              <div class="rp-text">Emotional Levers</div>
+            </div>
+            <div class="ha-scroll-content" style="animation-duration:25s; padding-top: 4rem;">
+              <img src="assets/brand/strategic analysis section/card2.png" alt="Strategy Report" class="ha-scroll-img">
+              <img src="assets/brand/strategic analysis section/card2.png" alt="Strategy Report" class="ha-scroll-img">
+            </div>
+            <div class="ha-scroll-mask mask-no-top"></div>
+          </div>
+          <div class="ha-footer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg> <span>analysis</span></div>
+          <div class="ha-category">analysis</div>
+        </div>
+        <div class="ha-card rv" data-ha="2" style="transition-delay:.3s">
+          <div class="ha-num"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M12 5v14M5 12l7 7 7-7" />
+            </svg> 03</div>
+          <div class="ha-line"></div>
+          <div class="ha-title">Hook & Attention</div>
+          <div class="ha-desc">Stop the scroll with high-retention opening hooks.</div>
+          <div class="ha-img-wrap ha-scroll-wrap">
+            <div class="rp-card static-tab">
+              <div class="rp-dot"></div>
+              <div class="rp-text">Hook & Attention</div>
+            </div>
+            <div class="ha-scroll-content" style="animation-duration:22s; padding-top: 4rem;">
+              <img src="assets/brand/strategic analysis section/card3.png" alt="Conversion Report"
+                class="ha-scroll-img">
+              <img src="assets/brand/strategic analysis section/card3.png" alt="Conversion Report"
+                class="ha-scroll-img">
+            </div>
+            <div class="ha-scroll-mask mask-no-top"></div>
+          </div>
+          <div class="ha-footer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg> <span>optimization</span></div>
+          <div class="ha-category">optimization</div>
+        </div>
+        <div class="ha-card rv" data-ha="3" style="transition-delay:.45s">
+          <div class="ha-num"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M12 5v14M5 12l7 7 7-7" />
+            </svg> 04</div>
+          <div class="ha-line"></div>
+          <div class="ha-title">Strategic Intelligence</div>
+          <div class="ha-desc">One report, everything you need.</div>
+          <div class="ha-img-wrap" style="background:transparent; overflow:visible;">
+            <div class="rp-stack">
+              <div class="rp-card">
+                <div class="rp-dot"></div>
+                <div class="rp-text">Hook & Attention</div>
+              </div>
+              <div class="rp-card">
+                <div class="rp-dot"></div>
+                <div class="rp-text">Emotional Levers</div>
+              </div>
+              <div class="rp-card">
+                <div class="rp-dot"></div>
+                <div class="rp-text">Trust & Proof</div>
+              </div>
+              <div class="rp-card">
+                <div class="rp-dot"></div>
+                <div class="rp-text">Visual Execution</div>
+              </div>
+              <div class="rp-card">
+                <div class="rp-dot"></div>
+                <div class="rp-text">Messaging & Copy</div>
+              </div>
+              <div class="rp-card">
+                <div class="rp-dot"></div>
+                <div class="rp-text">Offer & Conversion</div>
+              </div>
+            </div>
+          </div>
+          <div class="ha-footer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.5">
+              <path d="M12 20V10M18 20V4M6 20v-4" />
+            </svg> <span>intelligence</span></div>
+          <div class="ha-category">intelligence</div>
+        </div>
+
+        <!-- Persistent detail panel (right) -->
+        <div class="ha-detail rv" style="transition-delay:.6s">
+          <div class="ha-detail-tag">Core Services <span>4/4</span></div>
+          <div class="ha-detail-title">Modular, flexible solutions for modern ad intelligence</div>
+          <div class="ha-detail-text">We build future-proof creative intelligence that scales seamlessly and adapts to
+            your team's needs. Atlas10X's key capabilities include:</div>
+          <div class="ha-detail-dots"></div>
+          <div class="ha-detail-footer">Design, optimize, scale, and secure.</div>
+        </div>
+      </div>
+
+      <div class="cta-r rv" style="margin-top:4rem">
+        <div class="d-bars">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <a href="https://atlas10x.com/" class="cta-l">See intelligence in action <span class="cta-c"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg></span></a>
+      </div>
+    </div>
+  </section>
+  <div class="s-spacer"></div>
+
+  <!-- CREATIVE STUDIO -->
+  <section id="studio">
+    <div class="sc">
+      <h2 class="sdt rv">Creative Studio</h2>
+      <div class="sh">
+        <div class="sh-label rv">003 / Atlas10X</div>
+        <div class="sh-sub rv rv-d1">Intelligence-driven ad generation. Never create from a blank canvas again.</div>
+        <div class="sh-desc rv rv-d2">Production-ready creative grounded in what actually works in your market.</div>
+      </div>
+
+      <!-- Row 1: Featured generation card + accent card -->
+      <div class="work-row-1 rvs">
+        <div class="work-card work-featured mosaic-card" style="padding:0;overflow:hidden">
+          <div class="mosaic-container"></div>
+          <div class="work-card-title">Grounded Generation</div>
+          <div class="work-card-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <!-- Reference ads (left) + Generated output (right) -->
+          <div class="gg-layout">
+            <div class="gg-ref-img"><img src="assets/brand/grounded generation/v2/ad1.jpeg" alt="Reference Ad 1"></div>
+            <div class="gg-plus">+</div>
+            <div class="gg-ref-img"><img src="assets/brand/grounded generation/v2/ad2.jpeg" alt="Reference Ad 2"></div>
+            <div class="gg-output"><img src="assets/brand/grounded generation/v2/ad3.jpeg" alt="Generated Ad"></div>
+          </div>
+        </div>
+        <div class="work-card work-accent">
+          <div class="work-accent-tag">Studio Suite <span>4/4</span></div>
+          <div class="work-accent-title">Intelligence-Driven<br>Creative<br>Production</div>
+          <div class="work-accent-text">Every generated ad is grounded in competitive intelligence and real reference
+            images. No AI slop — production-ready output.</div>
+          <div class="work-accent-dots"></div>
+          <div class="work-accent-footer"><span>Steal like an artist. Build like an engineer.</span></div>
+        </div>
+      </div>
+
+      <!-- Row 2: 3 equal cards -->
+      <div class="work-row-2 rv">
+        <div class="work-card work-sm rvs">
+          <div class="work-card-img" style="padding:0">
+            <div class="conveyor-wrap">
+              <div class="conveyor-fade"></div>
+              <div class="conveyor-belt">
+                <div class="conveyor-track">
+                  <div class="conveyor-item"
+                    style="background-image:url('assets/brand/ads/creative-studio-143d397f-b370-4ccc-ba0f-0cc72aea3851.jpeg')">
+                  </div>
+                  <div class="conveyor-item"
+                    style="background-image:url('assets/brand/ads/creative-studio-2e19aa50-484e-4ba8-926b-f5b022e7b95b.jpeg')">
+                  </div>
+                  <div class="conveyor-item"
+                    style="background-image:url('assets/brand/ads/creative-studio-5c04d858-9682-4893-998a-79998d1c3035.jpeg')">
+                  </div>
+                  <div class="conveyor-item"
+                    style="background-image:url('assets/brand/ads/creative-studio-80afd062-3273-4a7f-981e-9f8c84892aa7.jpeg')">
+                  </div>
+                </div>
+                <div class="conveyor-track">
+                  <div class="conveyor-item"
+                    style="background-image:url('assets/brand/ads/creative-studio-143d397f-b370-4ccc-ba0f-0cc72aea3851.jpeg')">
+                  </div>
+                  <div class="conveyor-item"
+                    style="background-image:url('assets/brand/ads/creative-studio-2e19aa50-484e-4ba8-926b-f5b022e7b95b.jpeg')">
+                  </div>
+                  <div class="conveyor-item"
+                    style="background-image:url('assets/brand/ads/creative-studio-5c04d858-9682-4893-998a-79998d1c3035.jpeg')">
+                  </div>
+                  <div class="conveyor-item"
+                    style="background-image:url('assets/brand/ads/creative-studio-80afd062-3273-4a7f-981e-9f8c84892aa7.jpeg')">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="work-card-title">No AI Slop</div>
+          <div class="work-card-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="bc-cta-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg></div>
+        </div>
+        <div class="work-card work-sm rvs" style="padding:0;overflow:hidden">
+          <div class="work-card-title">Every Format</div>
+          <div class="work-card-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="fmt-grid">
+            <div class="fmt-device fmt-phone">
+              <div class="fmt-screen"><span class="fmt-ratio">9:16</span></div>
+              <div class="fmt-notch"></div>
+              <div class="fmt-label">Stories · Reels · TikTok</div>
+            </div>
+            <div class="fmt-device fmt-tablet">
+              <div class="fmt-screen"><span class="fmt-ratio">4:5</span></div>
+              <div class="fmt-label">Feed · Facebook</div>
+            </div>
+            <div class="fmt-device fmt-monitor">
+              <div class="fmt-screen"><span class="fmt-ratio">1:1</span></div>
+              <div class="fmt-stand"></div>
+              <div class="fmt-base"></div>
+              <div class="fmt-label">Grid · Instagram</div>
+            </div>
+            <div class="fmt-device fmt-laptop">
+              <div class="fmt-screen"><span class="fmt-ratio">16:9</span></div>
+              <div class="fmt-keyboard"></div>
+              <div class="fmt-label">YouTube · Display</div>
+            </div>
+          </div>
+        </div>
+        <div class="work-card work-sm mosaic-card rvs" style="padding:0;overflow:hidden">
+          <div class="mosaic-container"></div>
+          <div class="work-card-title">Iterate Naturally</div>
+          <div class="work-card-dots">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="iterate-wrap">
+            <div class="iterate-slides" id="iterate-slides">
+              <div class="iterate-slide iterate-active"
+                style="background-image:url('assets/brand/iterate naturally/creative-studio-04b1df58-6927-4576-98d7-e47cf981e098.jpeg')">
+              </div>
+              <div class="iterate-slide"
+                style="background-image:url('assets/brand/iterate naturally/creative-studio-3435d5ca-8c9c-463c-9bef-8a14ced84ce4.jpeg')">
+              </div>
+              <div class="iterate-slide"
+                style="background-image:url('assets/brand/iterate naturally/creative-studio-80afd062-3273-4a7f-981e-9f8c84892aa7.jpeg')">
+              </div>
+            </div>
+            <button class="iterate-btn" id="iterate-btn">Iterate →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-r rv" style="margin-top:4rem">
+        <div class="d-bars">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <a href="https://atlas10x.com/" class="cta-l">Try the studio <span class="cta-c"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg></span></a>
+      </div>
+    </div>
+  </section>
+  <div class="s-spacer"></div>
+
+  <!-- OUR PROCESS — 3-column layout matching Platform -->
+  <section id="process">
+    <div class="sc">
+      <h2 class="sdt rv">Our Process</h2>
+      <div class="sh">
+        <div class="sh-label rv">004 / Atlas10X</div>
+        <div class="sh-sub rv rv-d1">Three steps from insight to execution.</div>
+        <div class="sh-desc rv rv-d2">Analyze. Extract. Understand. Create.</div>
+      </div>
+
+      <div class="proc-wrap rv" id="proc-wrap">
+        <!-- Left: SVG illustration column -->
+        <div class="proc-image">
+          <div class="proc-img-inner" id="proc-img">
+
+            <!-- SCENE 0: Analyze — network discovery -->
+            <div class="proc-scene proc-scene-active" data-scene="0">
+              <svg viewBox="0 0 400 500" fill="none">
+                <!-- central website node -->
+                <circle class="anim-scale" cx="200" cy="220" r="36" fill="#1a1a1a" stroke="#E8573A" stroke-width="2"/>
+                <rect class="anim-scale d1" x="184" y="208" width="32" height="4" rx="2" fill="#E8573A"/>
+                <rect class="anim-scale d2" x="184" y="216" width="24" height="3" rx="1.5" fill="#666"/>
+                <rect class="anim-scale d2" x="184" y="223" width="28" height="3" rx="1.5" fill="#666"/>
+                <rect class="anim-scale d3" x="184" y="230" width="20" height="3" rx="1.5" fill="#444"/>
+                <!-- globe icon in center -->
+                <circle class="anim-scale d1" cx="200" cy="200" r="8" stroke="#E8573A" stroke-width="1.5" fill="none"/>
+                <ellipse class="anim-scale d1" cx="200" cy="200" rx="3.5" ry="8" stroke="#E8573A" stroke-width="1" fill="none"/>
+                <line class="anim-scale d1" x1="192" y1="200" x2="208" y2="200" stroke="#E8573A" stroke-width="1"/>
+                <!-- connection lines radiating out -->
+                <line class="anim-draw d3" x1="236" y1="220" x2="300" y2="160" stroke="#E8573A" stroke-width="1" opacity=".6" style="--dash-len:100"/>
+                <line class="anim-draw d4" x1="236" y1="220" x2="310" y2="240" stroke="#E8573A" stroke-width="1" opacity=".6" style="--dash-len:100"/>
+                <line class="anim-draw d3" x1="164" y1="220" x2="100" y2="150" stroke="#E8573A" stroke-width="1" opacity=".6" style="--dash-len:100"/>
+                <line class="anim-draw d4" x1="164" y1="220" x2="90" y2="260" stroke="#E8573A" stroke-width="1" opacity=".6" style="--dash-len:100"/>
+                <line class="anim-draw d5" x1="200" y1="256" x2="200" y2="330" stroke="#E8573A" stroke-width="1" opacity=".6" style="--dash-len:80"/>
+                <line class="anim-draw d5" x1="200" y1="184" x2="200" y2="120" stroke="#E8573A" stroke-width="1" opacity=".6" style="--dash-len:80"/>
+                <line class="anim-draw d5" x1="236" y1="240" x2="290" y2="310" stroke="#E8573A" stroke-width="1" opacity=".4" style="--dash-len:100"/>
+                <line class="anim-draw d5" x1="164" y1="240" x2="110" y2="320" stroke="#E8573A" stroke-width="1" opacity=".4" style="--dash-len:100"/>
+                <!-- competitor nodes -->
+                <circle class="anim-scale d5 pulse-node" cx="300" cy="160" r="4" fill="#E8573A"/>
+                <circle class="anim-scale d6" cx="310" cy="240" r="4" fill="#E8573A" opacity=".8"/>
+                <circle class="anim-scale d5" cx="100" cy="150" r="4" fill="#E8573A"/>
+                <circle class="anim-scale d6 pulse-node" cx="90" cy="260" r="4" fill="#E8573A" opacity=".8"/>
+                <circle class="anim-scale d7" cx="200" cy="330" r="4" fill="#E8573A" opacity=".6"/>
+                <circle class="anim-scale d7" cx="200" cy="120" r="4" fill="#E8573A" opacity=".6"/>
+                <circle class="anim-scale d7" cx="290" cy="310" r="4" fill="#E8573A" opacity=".5"/>
+                <circle class="anim-scale d7" cx="110" cy="320" r="4" fill="#E8573A" opacity=".5"/>
+                <!-- secondary nodes (2nd ring) -->
+                <line class="anim-draw d7" x1="300" y1="160" x2="340" y2="120" stroke="#444" stroke-width="1" style="--dash-len:60"/>
+                <line class="anim-draw d7" x1="300" y1="160" x2="350" y2="170" stroke="#444" stroke-width="1" style="--dash-len:60"/>
+                <line class="anim-draw d7" x1="100" y1="150" x2="60" y2="110" stroke="#444" stroke-width="1" style="--dash-len:60"/>
+                <line class="anim-draw d7" x1="100" y1="150" x2="55" y2="170" stroke="#444" stroke-width="1" style="--dash-len:60"/>
+                <circle class="anim-scale d9" cx="340" cy="120" r="3" fill="#666"/>
+                <circle class="anim-scale d9" cx="350" cy="170" r="3" fill="#666"/>
+                <circle class="anim-scale d9" cx="60" cy="110" r="3" fill="#666"/>
+                <circle class="anim-scale d9" cx="55" cy="170" r="3" fill="#666"/>
+                <!-- scanner ring -->
+                <circle class="scan-rotate" cx="200" cy="220" r="55" stroke="#E8573A" stroke-width=".5" stroke-dasharray="8 12" opacity=".3" fill="none"/>
+                <!-- label -->
+                <text class="anim-fade d8" x="200" y="400" text-anchor="middle" fill="#666" font-size="11" font-family="Inter, sans-serif">59+ competitors discovered</text>
+                <!-- search bar at top -->
+                <rect class="anim-in" x="100" y="60" width="200" height="32" rx="16" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+                <circle class="anim-fade d2" cx="122" cy="76" r="7" stroke="#666" stroke-width="1.5" fill="none"/>
+                <line class="anim-fade d2" x1="127" y1="81" x2="131" y2="85" stroke="#666" stroke-width="1.5"/>
+                <rect class="anim-fade d3" x="140" y="73" width="60" height="6" rx="3" fill="#333"/>
+              </svg>
+            </div>
+
+            <!-- SCENE 1: Extract — data funnel -->
+            <div class="proc-scene" data-scene="1">
+              <svg viewBox="0 0 400 500" fill="none">
+                <!-- database icon top -->
+                <ellipse class="anim-scale" cx="200" cy="100" rx="60" ry="16" fill="#1a1a1a" stroke="#E8573A" stroke-width="1.5"/>
+                <path class="anim-draw d1" d="M140 100v30c0 9 27 16 60 16s60-7 60-16v-30" stroke="#E8573A" stroke-width="1.5" fill="none" style="--dash-len:200"/>
+                <ellipse class="anim-fade d2" cx="200" cy="130" rx="60" ry="16" fill="none" stroke="#E8573A" stroke-width="1" opacity=".4"/>
+                <!-- pulsing dot on database -->
+                <circle class="anim-scale d2 pulse-node" cx="240" cy="92" r="4" fill="#E8573A"/>
+                <!-- streaming data lines -->
+                <line class="data-flow d3" x1="170" y1="150" x2="170" y2="230" stroke="#E8573A" stroke-width="1.5" opacity=".6"/>
+                <line class="data-flow d4" x1="190" y1="150" x2="190" y2="230" stroke="#E8573A" stroke-width="1.5" opacity=".8"/>
+                <line class="data-flow d5" x1="210" y1="150" x2="210" y2="230" stroke="#E8573A" stroke-width="1.5"/>
+                <line class="data-flow d4" x1="230" y1="150" x2="230" y2="230" stroke="#E8573A" stroke-width="1.5" opacity=".6"/>
+                <!-- funnel shape -->
+                <path class="anim-draw d3" d="M130 240l70 60v50" stroke="#E8573A" stroke-width="1.5" fill="none" style="--dash-len:150"/>
+                <path class="anim-draw d3" d="M270 240l-70 60v50" stroke="#E8573A" stroke-width="1.5" fill="none" style="--dash-len:150"/>
+                <line class="anim-fade d4" x1="130" y1="240" x2="270" y2="240" stroke="#E8573A" stroke-width="1.5" opacity=".5"/>
+                <!-- progress bar -->
+                <rect class="anim-fade d5" x="120" y="375" width="160" height="6" rx="3" fill="#1a1a1a"/>
+                <rect class="bar-fill" x="120" y="375" width="160" height="6" rx="3" fill="#E8573A" style="clip-path:inset(0 0 0 0)"/>
+                <!-- extracted items list -->
+                <g class="anim-in d5">
+                  <rect x="150" y="400" width="100" height="14" rx="3" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+                  <circle cx="160" cy="407" r="3" fill="#4a4" opacity=".8"/>
+                  <rect x="168" y="404" width="50" height="5" rx="2" fill="#444"/>
+                </g>
+                <g class="anim-in d6">
+                  <rect x="150" y="420" width="100" height="14" rx="3" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+                  <circle cx="160" cy="427" r="3" fill="#4a4" opacity=".8"/>
+                  <rect x="168" y="424" width="40" height="5" rx="2" fill="#444"/>
+                </g>
+                <g class="anim-in d7">
+                  <rect x="150" y="440" width="100" height="14" rx="3" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+                  <circle cx="160" cy="447" r="3" fill="#4a4" opacity=".8"/>
+                  <rect x="168" y="444" width="55" height="5" rx="2" fill="#444"/>
+                </g>
+                <g class="anim-in d8">
+                  <rect x="150" y="460" width="100" height="14" rx="3" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+                  <circle cx="160" cy="467" r="3" fill="#4a4" opacity=".8"/>
+                  <rect x="168" y="464" width="45" height="5" rx="2" fill="#444"/>
+                </g>
+                <!-- counter -->
+                <text class="anim-fade d6" x="200" y="365" text-anchor="middle" fill="#E8573A" font-size="13" font-weight="600" font-family="Inter, sans-serif">59 of 59 competitors</text>
+                <!-- label -->
+                <text class="anim-fade d4" x="200" y="265" text-anchor="middle" fill="#888" font-size="10" font-family="Inter, sans-serif">Extracting Ads...</text>
+              </svg>
+            </div>
+
+            <!-- SCENE 2: Understand — strategic brain -->
+            <div class="proc-scene" data-scene="2">
+              <svg viewBox="0 0 400 500" fill="none">
+                <!-- document frame -->
+                <rect class="anim-scale" x="80" y="60" width="240" height="340" rx="10" fill="#111" stroke="#333" stroke-width="1"/>
+                <!-- sidebar -->
+                <rect class="anim-fade d1" x="80" y="60" width="60" height="340" rx="10" fill="#0d0d0d"/>
+                <rect class="anim-fade d2" x="90" y="90" width="40" height="5" rx="2" fill="#E8573A" opacity=".6"/>
+                <rect class="anim-fade d3" x="90" y="105" width="35" height="4" rx="2" fill="#444"/>
+                <rect class="anim-fade d3" x="90" y="115" width="38" height="4" rx="2" fill="#444"/>
+                <rect class="anim-fade d4" x="90" y="125" width="30" height="4" rx="2" fill="#333"/>
+                <rect class="anim-fade d4" x="90" y="135" width="33" height="4" rx="2" fill="#333"/>
+                <rect class="anim-fade d5" x="90" y="160" width="40" height="4" rx="2" fill="#E8573A" opacity=".4"/>
+                <circle class="anim-fade d5" cx="94" cy="178" r="3" fill="#E8573A" opacity=".5"/>
+                <rect class="anim-fade d5" x="101" y="175" width="28" height="4" rx="2" fill="#555"/>
+                <circle class="anim-fade d6" cx="94" cy="190" r="3" fill="#E8573A" opacity=".5"/>
+                <rect class="anim-fade d6" x="101" y="187" width="32" height="4" rx="2" fill="#555"/>
+                <circle class="anim-fade d6" cx="94" cy="202" r="3" fill="#E8573A" opacity=".5"/>
+                <rect class="anim-fade d6" x="101" y="199" width="25" height="4" rx="2" fill="#555"/>
+                <!-- main content area -->
+                <rect class="anim-in d2" x="155" y="85" width="150" height="8" rx="3" fill="#fff" opacity=".8"/>
+                <rect class="anim-in d3" x="155" y="100" width="130" height="5" rx="2" fill="#888"/>
+                <rect class="anim-in d3" x="155" y="110" width="145" height="5" rx="2" fill="#666"/>
+                <!-- strategy tag -->
+                <rect class="anim-scale d4" x="155" y="130" width="40" height="14" rx="4" fill="#E8573A" opacity=".2"/>
+                <text class="anim-fade d4" x="175" y="140" text-anchor="middle" fill="#E8573A" font-size="7" font-weight="600" font-family="Inter, sans-serif">STEAL</text>
+                <rect class="anim-fade d4" x="200" y="133" width="90" height="6" rx="2" fill="#ccc"/>
+                <!-- insight block 1 -->
+                <rect class="anim-in d5" x="155" y="155" width="150" height="4" rx="2" fill="#666"/>
+                <rect class="anim-in d5" x="155" y="163" width="130" height="4" rx="2" fill="#555"/>
+                <rect class="anim-in d5" x="155" y="171" width="140" height="4" rx="2" fill="#555"/>
+                <!-- evidence images -->
+                <rect class="anim-scale d6" x="160" y="185" width="50" height="55" rx="4" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+                <rect class="anim-scale d7" x="220" y="185" width="50" height="55" rx="4" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+                <rect class="anim-fade d7" x="166" y="195" width="38" height="25" rx="2" fill="#2a2a2a"/>
+                <rect class="anim-fade d8" x="226" y="195" width="38" height="25" rx="2" fill="#2a2a2a"/>
+                <text class="anim-fade d8" x="185" y="236" text-anchor="middle" fill="#555" font-size="6" font-family="Inter, sans-serif">DedCool</text>
+                <text class="anim-fade d8" x="245" y="236" text-anchor="middle" fill="#555" font-size="6" font-family="Inter, sans-serif">Phlur</text>
+                <!-- strategy tag 2 -->
+                <rect class="anim-scale d7" x="155" y="255" width="48" height="14" rx="4" fill="#E8573A" opacity=".2"/>
+                <text class="anim-fade d7" x="179" y="265" text-anchor="middle" fill="#E8573A" font-size="7" font-weight="600" font-family="Inter, sans-serif">EXPLOIT</text>
+                <rect class="anim-fade d7" x="208" y="258" width="80" height="6" rx="2" fill="#ccc"/>
+                <rect class="anim-in d8" x="155" y="278" width="150" height="4" rx="2" fill="#666"/>
+                <rect class="anim-in d8" x="155" y="286" width="135" height="4" rx="2" fill="#555"/>
+                <!-- CTA button -->
+                <rect class="anim-scale d9" x="260" y="310" width="50" height="18" rx="6" fill="#1a1a1a" stroke="#444" stroke-width="1"/>
+                <text class="anim-fade d9" x="285" y="322" text-anchor="middle" fill="#888" font-size="6" font-family="Inter, sans-serif">Creative Studio</text>
+                <!-- floating analysis badge -->
+                <g class="float-el">
+                  <rect class="anim-scale d8" x="260" y="65" width="55" height="22" rx="8" fill="#E8573A" opacity=".15"/>
+                  <text class="anim-fade d9" x="287" y="80" text-anchor="middle" fill="#E8573A" font-size="7" font-weight="600" font-family="Inter, sans-serif">5x deeper</text>
+                </g>
+                <!-- bottom label -->
+                <text class="anim-fade d10" x="200" y="430" text-anchor="middle" fill="#666" font-size="11" font-family="Inter, sans-serif">Strategic intelligence per ad</text>
+              </svg>
+            </div>
+
+            <!-- SCENE 3: Create — creative studio -->
+            <div class="proc-scene" data-scene="3">
+              <svg viewBox="0 0 400 500" fill="none">
+                <!-- artboard frame -->
+                <rect class="anim-scale" x="60" y="70" width="280" height="320" rx="10" fill="#111" stroke="#333" stroke-width="1"/>
+                <!-- toolbar top -->
+                <rect class="anim-fade d1" x="60" y="70" width="280" height="30" rx="10" fill="#0d0d0d"/>
+                <circle class="anim-scale d2" cx="80" cy="85" r="4" fill="#E8573A" opacity=".6"/>
+                <circle class="anim-scale d2" cx="92" cy="85" r="4" fill="#E8573A" opacity=".3"/>
+                <circle class="anim-scale d2" cx="104" cy="85" r="4" fill="#E8573A" opacity=".15"/>
+                <rect class="anim-fade d2" x="260" y="80" width="60" height="10" rx="5" fill="#E8573A" opacity=".2"/>
+                <text class="anim-fade d3" x="290" y="88" text-anchor="middle" fill="#E8573A" font-size="6" font-weight="600" font-family="Inter, sans-serif">Export</text>
+                <!-- main canvas area - ad preview -->
+                <rect class="anim-in d2" x="85" y="115" width="230" height="130" rx="6" fill="#1a1a1a"/>
+                <!-- ad image placeholder -->
+                <rect class="anim-scale d3" x="95" y="125" width="100" height="110" rx="4" fill="#2a1a0a"/>
+                <rect class="anim-fade d4" x="105" y="145" width="80" height="6" rx="2" fill="#E8573A" opacity=".6"/>
+                <rect class="anim-fade d5" x="105" y="156" width="60" height="4" rx="2" fill="#888"/>
+                <rect class="anim-fade d5" x="105" y="164" width="70" height="4" rx="2" fill="#666"/>
+                <!-- product visual -->
+                <rect class="anim-scale d4" x="115" y="180" width="55" height="40" rx="4" fill="#333"/>
+                <rect class="anim-fade d5" x="125" y="188" width="35" height="20" rx="2" fill="#444"/>
+                <!-- ad copy side -->
+                <rect class="anim-fade d4" x="210" y="125" width="95" height="8" rx="2" fill="#fff" opacity=".7"/>
+                <rect class="anim-fade d5" x="210" y="140" width="85" height="4" rx="2" fill="#888"/>
+                <rect class="anim-fade d5" x="210" y="149" width="90" height="4" rx="2" fill="#666"/>
+                <rect class="anim-fade d5" x="210" y="158" width="75" height="4" rx="2" fill="#555"/>
+                <!-- CTA button in ad -->
+                <rect class="anim-scale d6" x="210" y="175" width="80" height="20" rx="6" fill="#E8573A"/>
+                <text class="anim-fade d7" x="250" y="189" text-anchor="middle" fill="#fff" font-size="7" font-weight="600" font-family="Inter, sans-serif">Shop Now</text>
+                <!-- brand badge -->
+                <rect class="anim-scale d5" x="210" y="210" width="50" height="12" rx="4" fill="#1a1a1a" stroke="#444" stroke-width=".5"/>
+                <text class="anim-fade d6" x="235" y="219" text-anchor="middle" fill="#888" font-size="6" font-family="Inter, sans-serif">Your Brand</text>
+                <!-- variations row -->
+                <g class="anim-in d6">
+                  <text x="85" y="265" fill="#666" font-size="8" font-family="Inter, sans-serif">Variations</text>
+                  <rect x="85" y="275" width="65" height="55" rx="4" fill="#1a1a1a" stroke="#E8573A" stroke-width="1"/>
+                  <rect x="160" y="275" width="65" height="55" rx="4" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+                  <rect x="235" y="275" width="65" height="55" rx="4" fill="#1a1a1a" stroke="#333" stroke-width="1"/>
+                </g>
+                <!-- mini ad thumbnails -->
+                <rect class="anim-fade d7" x="91" y="282" width="53" height="30" rx="2" fill="#2a1a0a"/>
+                <rect class="anim-fade d7" x="91" y="316" width="30" height="4" rx="1" fill="#888"/>
+                <rect class="anim-fade d8" x="166" y="282" width="53" height="30" rx="2" fill="#1a0a2a"/>
+                <rect class="anim-fade d8" x="166" y="316" width="30" height="4" rx="1" fill="#888"/>
+                <rect class="anim-fade d9" x="241" y="282" width="53" height="30" rx="2" fill="#0a1a2a"/>
+                <rect class="anim-fade d9" x="241" y="316" width="30" height="4" rx="1" fill="#888"/>
+                <!-- check marks -->
+                <circle class="anim-scale d8" cx="145" cy="278" r="6" fill="#E8573A"/>
+                <path class="anim-fade d9" d="M141 278l3 3 5-5" stroke="#fff" stroke-width="1.5" fill="none"/>
+                <!-- floating speed badge -->
+                <g class="float-el">
+                  <rect class="anim-scale d7" x="280" y="55" width="70" height="24" rx="8" fill="#E8573A" opacity=".15"/>
+                  <text class="anim-fade d8" x="315" y="70" text-anchor="middle" fill="#E8573A" font-size="8" font-weight="700" font-family="Inter, sans-serif">10x faster</text>
+                </g>
+                <!-- bottom label -->
+                <text class="anim-fade d10" x="200" y="430" text-anchor="middle" fill="#666" font-size="11" font-family="Inter, sans-serif">Production-ready creative output</text>
+              </svg>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Center: Header + Content column -->
+        <div class="proc-content">
+          <div class="proc-header">
+            <div class="proc-label">Atlas10X Process</div>
+            <div class="proc-dots-nav" id="proc-dots">
+              <div class="pc-dot active"></div>
+              <div class="pc-dot"></div>
+              <div class="pc-dot"></div>
+              <div class="pc-dot"></div>
+            </div>
+            <div class="proc-arrows">
+              <button class="pc-arr" id="proc-prev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M19 12H5M12 19l-7-7 7-7" />
+                </svg></button>
+              <button class="pc-arr" id="proc-next"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg></button>
+            </div>
+          </div>
+
+          <div class="proc-slides" id="proc-slides">
+            <div class="proc-slide proc-slide-active" data-proc="0">
+              <h3>Step 1 — Analyze</h3>
+              <p>Enter your business website and Atlas10X automatically discovers your competitive landscape. Define
+                your market, target region, and let the AI identify every competitor worth watching.</p>
+              <div class="proc-stat">
+                <div class="proc-stat-val" data-count="59" data-suffix="+">0</div>
+                <div class="proc-stat-label">Competitors discovered per analysis</div>
+              </div>
+            </div>
+            <div class="proc-slide" data-proc="1">
+              <h3>Step 2 — Extract</h3>
+              <p>Atlas10X automatically pulls every live ad from all discovered competitors. Watch in real-time as
+                thousands of ads are extracted, organized, and prepared for analysis.</p>
+              <div class="proc-stat">
+                <div class="proc-stat-val" data-count="200" data-suffix="+">0</div>
+                <div class="proc-stat-label">Ads extracted per competitor</div>
+              </div>
+            </div>
+            <div class="proc-slide" data-proc="2">
+              <h3>Step 3 — Understand</h3>
+              <p>Every ad is decoded across strategy, positioning, emotional hooks, and conversion techniques. Get a
+                full strategic brief with actionable insights — not just data, but intelligence.</p>
+              <div class="proc-stat">
+                <div class="proc-stat-val">5<span class="ac">x</span></div>
+                <div class="proc-stat-label">Dimensions of analysis per ad</div>
+              </div>
+            </div>
+            <div class="proc-slide" data-proc="3">
+              <h3>Step 4 — Create</h3>
+              <p>Turn intelligence into action. The Creative Studio generates production-ready ads grounded in your
+                competitors' proven techniques, remixed with your brand identity.</p>
+              <div class="proc-stat">
+                <div class="proc-stat-val">10<span class="ac">x</span></div>
+                <div class="proc-stat-label">Faster creative production</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: CTA column -->
+        <div class="proc-cta-col">
+          <a href="https://atlas10x.com/" class="btn-p" style="padding:1rem 2rem;font-size:1rem;border-radius:var(--r-md);text-decoration:none">Book a Demo</a>
+          <p style="font-size:.8rem;color:var(--color-text-secondary);margin-top:.8rem;text-align:center">Book a demo to
+            see this<br>process in action.</p>
+        </div>
+      </div>
+
+      <div class="cta-r rv" style="margin-top:4rem">
+        <div class="d-bars">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <a href="https://atlas10x.com/" class="cta-l">Questions about our process? We're here to help <span class="cta-c"><svg
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg></span></a>
+      </div>
+    </div>
+  </section>
+  <div class="s-spacer"></div>
+
+  <!-- METRICS -->
+  <section id="metrics">
+    <div class="sc">
+      <h2 class="sdt rv">Performance</h2>
+      <div class="sh">
+        <div class="sh-label rv">005 / Atlas10X</div>
+        <div class="sh-sub rv rv-d1">Intelligence that compounds<br>with every analysis.</div>
+        <div class="sh-desc rv rv-d2">Real capabilities. Real numbers. From paste-URL to production-ready creative.</div>
+      </div>
+
+      <!-- BENTO ROW 1: Hero Card | Donut Chart | Gauge Panel -->
+      <div class="bento-row bento-row-1 rv">
+        <!-- AI Powered Ad Library card -->
+        <div class="bc rvs">
+          <div class="bc-tag"><span>AI</span> <span>Searchable Ad Library</span></div>
+          <div class="bc-hero-visual">
+            <div class="bc-hero-grid">
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="bc-hero-brand">Atlas10X</div>
+          </div>
+          <div class="mc-v" style="font-size:1.6rem" data-count="2400000" data-suffix="+" data-display="2.4M">0</div>
+          <div class="mc-l">Indexed Ads — Searchable by Concept, Emotion & Style</div>
+        </div>
+
+        <!-- Ad Analysis Depth donut card -->
+        <div class="bc rvs">
+          <div class="bc-title">Ad DNA Breakdown</div>
+          <div class="bc-sub">5 dimensions per ad analyzed</div>
+          <div class="donut-wrap">
+            <svg class="donut-svg" viewBox="0 0 120 120" id="donut-chart">
+              <circle class="donut-ring" cx="60" cy="60" r="42" />
+              <circle class="donut-seg" cx="60" cy="60" r="42" stroke="#E8573A"
+                stroke-dasharray="0 264" data-target="106" />
+              <circle class="donut-seg" cx="60" cy="60" r="42" stroke="#D4A44A"
+                stroke-dasharray="0 264" data-target="53" data-offset="106" />
+              <circle class="donut-seg" cx="60" cy="60" r="42" stroke="#4ADE80"
+                stroke-dasharray="0 264" data-target="53" data-offset="159" />
+              <circle class="donut-seg" cx="60" cy="60" r="42" stroke="#60A5FA"
+                stroke-dasharray="0 264" data-target="26" data-offset="212" />
+              <circle class="donut-seg" cx="60" cy="60" r="42" stroke="#A78BFA"
+                stroke-dasharray="0 264" data-target="26" data-offset="238" />
+            </svg>
+          </div>
+          <div class="donut-stats">
+            <div class="donut-stat">
+              <div class="donut-stat-v">Visual</div>
+              <div class="donut-stat-l">Execution</div>
+              <div class="donut-dot" style="background:var(--color-primary)"></div>
+            </div>
+            <div class="donut-stat">
+              <div class="donut-stat-v">Vibe</div>
+              <div class="donut-stat-l">& Emotion</div>
+              <div class="donut-dot" style="background:#D4A44A"></div>
+            </div>
+            <div class="donut-stat">
+              <div class="donut-stat-v">Pitch</div>
+              <div class="donut-stat-l">& Proof</div>
+              <div class="donut-dot" style="background:#4ADE80"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Competitive Discovery gauge card -->
+        <div class="bc rvs">
+          <div class="gauge-row">
+            <div class="gauge-item">
+              <div class="gauge-label">Discovery</div>
+              <div class="gauge-tz">Auto-detect</div>
+              <div class="gauge-circle">
+                <div class="gauge-hand" data-rotate="210"></div>
+                <div class="gauge-hand gauge-hand-s" data-rotate="65"></div>
+              </div>
+              <div class="gauge-dots"><span></span><span></span><span></span><span class="off"></span></div>
+              <div class="gauge-status">25+</div>
+              <div class="gauge-ms">Competitors found</div>
+            </div>
+            <div class="gauge-item">
+              <div class="gauge-label">Extraction</div>
+              <div class="gauge-tz">Per competitor</div>
+              <div class="gauge-circle">
+                <div class="gauge-hand" data-rotate="150"></div>
+                <div class="gauge-hand gauge-hand-s" data-rotate="290"></div>
+              </div>
+              <div class="gauge-dots"><span></span><span></span><span></span><span></span></div>
+              <div class="gauge-status">200+</div>
+              <div class="gauge-ms">Live ads pulled</div>
+            </div>
+            <div class="gauge-item">
+              <div class="gauge-label">Analysis</div>
+              <div class="gauge-tz">Per ad</div>
+              <div class="gauge-circle">
+                <div class="gauge-hand" data-rotate="330"></div>
+                <div class="gauge-hand gauge-hand-s" data-rotate="120"></div>
+              </div>
+              <div class="gauge-dots"><span></span><span></span><span></span><span></span></div>
+              <div class="gauge-status">5</div>
+              <div class="gauge-ms">Dimensions scored</div>
+            </div>
+          </div>
+          <div class="gauge-footer">
+            <div class="gauge-footer-badge">Paste URL → Full Intelligence</div>
+            <div class="gauge-footer-title">Competitive Pipeline</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BENTO ROW 2: Extraction | Creative Speed | Analysis Dimensions | Side Stats -->
+      <div class="bento-row bento-row-2 rv">
+        <!-- Ads extracted per analysis card -->
+        <div class="bc rvs">
+          <div class="mb" id="cb1">
+            <div class="mb-b" data-height="30"></div>
+            <div class="mb-b" data-height="45"></div>
+            <div class="mb-b" data-height="55"></div>
+            <div class="mb-b" data-height="60"></div>
+            <div class="mb-b" data-height="68"></div>
+            <div class="mb-b" data-height="72"></div>
+            <div class="mb-b" data-height="78"></div>
+            <div class="mb-b" data-height="82"></div>
+            <div class="mb-b" data-height="88"></div>
+            <div class="mb-b" data-height="92"></div>
+            <div class="mb-b" data-height="96"></div>
+            <div class="mb-b" data-height="100"></div>
+          </div>
+          <div class="mc-l" style="margin-top:.75rem">Ads extracted per analysis cycle</div>
+          <div style="margin-top:1.5rem">
+            <div class="mc-v" style="font-size:3rem" data-count="5000" data-suffix="+" data-display="5K">0</div>
+            <div class="mc-l">Ads from 25+ Competitors</div>
+          </div>
+        </div>
+
+        <!-- Creative speed line chart card -->
+        <div class="bc rvs">
+          <div class="bc-title" style="text-align:center">Creative Production</div>
+          <div class="bc-sub" style="text-align:center">Atlas10X vs. manual workflow</div>
+          <div class="lc-wrap">
+            <svg class="lc-svg" viewBox="0 0 200 80" preserveAspectRatio="none">
+              <polyline class="lc-line lc-line-secondary"
+                points="0,15 25,18 50,20 75,22 100,25 125,28 150,30 175,32 200,35" />
+              <polyline class="lc-line lc-line-primary"
+                points="0,70 25,55 50,40 75,28 100,20 125,14 150,10 175,8 200,5" />
+            </svg>
+          </div>
+          <div class="lc-labels">
+            <span>Brief</span><span>Research</span><span>Iterate</span><span>Ship</span>
+          </div>
+          <div class="lc-stats">
+            <div class="lc-stat">
+              <div class="lc-stat-v">10x</div>
+              <div class="lc-stat-l">Faster</div>
+              <div class="lc-stat-dot" style="background:var(--color-primary)"></div>
+            </div>
+            <div class="lc-stat">
+              <div class="lc-stat-v">Manual</div>
+              <div class="lc-stat-l">Baseline</div>
+              <div class="lc-stat-dot" style="background:var(--color-text-tertiary)"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analysis Dimensions card -->
+        <div class="bc rvs">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:.75rem">
+            <div>
+              <div class="bc-title">Ad DNA Scores</div>
+              <div class="bc-sub" style="margin-bottom:0">5 dimensions per ad</div>
+            </div>
+            <div class="evo-score">
+              <div class="evo-score-label">Avg. Score</div>
+              <div class="evo-score-v"><span data-count="72">0</span><small>/100</small></div>
+            </div>
+          </div>
+          <div class="evo-bars" id="evo-bars">
+            <div class="evo-bar-col">
+              <div class="evo-bar"><div class="evo-bar-fill" data-height="68"><span class="evo-bar-val">68</span></div></div>
+              <div class="evo-bar-label">Visual</div>
+            </div>
+            <div class="evo-bar-col">
+              <div class="evo-bar"><div class="evo-bar-fill" data-height="75"><span class="evo-bar-val">75</span></div></div>
+              <div class="evo-bar-label">Vibe</div>
+            </div>
+            <div class="evo-bar-col">
+              <div class="evo-bar"><div class="evo-bar-fill" data-height="82"><span class="evo-bar-val">82</span></div></div>
+              <div class="evo-bar-label">Pitch</div>
+            </div>
+            <div class="evo-bar-col">
+              <div class="evo-bar"><div class="evo-bar-fill" data-height="61"><span class="evo-bar-val">61</span></div></div>
+              <div class="evo-bar-label">Proof</div>
+            </div>
+            <div class="evo-bar-col">
+              <div class="evo-bar"><div class="evo-bar-fill" data-height="73"><span class="evo-bar-val">73</span></div></div>
+              <div class="evo-bar-label">Closer</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Side stat stack -->
+        <div class="bc bc-sm rvs">
+          <div>
+            <div class="bc-sm-label">Competitor Reports</div>
+            <div class="bc-sm-stat" data-count="25" data-suffix="+">0</div>
+          </div>
+          <div style="margin:1rem 0">
+            <div class="bc-sm-stat" style="font-size:1.6rem;color:var(--color-primary)">Minutes</div>
+            <div class="bc-sm-label">Not Weeks — Full Analysis</div>
+          </div>
+          <div>
+            <div class="bc-sm-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 5h16M4 12h16M4 19h10"/><circle cx="19" cy="19" r="3"/><path d="M21 21l-1.5-1.5"/>
+              </svg>
+            </div>
+            <div class="bc-sm-label" style="margin-top:.5rem">Semantic Search — Not Keywords</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- News ticker -->
+      <div class="news-ticker rv">
+        <div class="news-ticker-inner">
+          <div class="news-ticker-item">Platform Capabilities</div>
+          <div class="news-ticker-item"><strong>2.4M+</strong> Ads Indexed</div>
+          <div class="news-ticker-item"><strong>25+</strong> Competitors Auto-Discovered per URL</div>
+          <div class="news-ticker-item"><strong>200+</strong> Ads Extracted per Competitor</div>
+          <div class="news-ticker-item"><strong>5</strong> Analysis Dimensions per Ad</div>
+          <div class="news-ticker-item"><strong>10x</strong> Faster Creative Production</div>
+          <!-- duplicate for seamless scroll -->
+          <div class="news-ticker-item">Platform Capabilities</div>
+          <div class="news-ticker-item"><strong>2.4M+</strong> Ads Indexed</div>
+          <div class="news-ticker-item"><strong>25+</strong> Competitors Auto-Discovered per URL</div>
+          <div class="news-ticker-item"><strong>200+</strong> Ads Extracted per Competitor</div>
+          <div class="news-ticker-item"><strong>5</strong> Analysis Dimensions per Ad</div>
+          <div class="news-ticker-item"><strong>10x</strong> Faster Creative Production</div>
+        </div>
+      </div>
+
+      <div class="cta-r rv">
+        <div class="d-bars">
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <a href="https://atlas10x.com/" class="cta-l">Explore more statistics <span class="cta-c"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg></span></a>
+      </div>
+    </div>
+  </section>
+  <div class="s-spacer"></div>
+
+  <!-- MARQUEE -->
+  <div class="mq-s">
+    <div class="mq-r">
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">Never start from scratch</span> <span
+          class="sp"></span></div>
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">Creative is the new targeting</span> <span
+          class="sp"></span></div>
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">Millions in R&D, for free</span> <span
+          class="sp"></span></div>
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">Never start from scratch</span> <span
+          class="sp"></span></div>
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">Creative is the new targeting</span> <span
+          class="sp"></span></div>
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">Millions in R&D, for free</span> <span
+          class="sp"></span></div>
+    </div>
+    <div class="mq-r">
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">Ads are systems, not one-offs</span> <span
+          class="sp"></span></div>
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">Your competitors solved your problem</span>
+        <span class="sp"></span>
+      </div>
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">Ads are systems, not one-offs</span> <span
+          class="sp"></span></div>
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">Your competitors solved your problem</span>
+        <span class="sp"></span>
+      </div>
+    </div>
+    <div class="mq-r">
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">Steal like an artist. Build like an
+          engineer.</span> <span class="sp"></span></div>
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">The world's smartest ad library</span> <span
+          class="sp"></span></div>
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">Steal like an artist. Build like an
+          engineer.</span> <span class="sp"></span></div>
+      <div class="mq-i">Atlas10X™ <span class="sp"></span> <span class="tl">The world's smartest ad library</span> <span
+          class="sp"></span></div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <section id="faq" style="padding-top:var(--sec-pad)">
+    <div class="sc">
+      <h2 class="sdt rv">Questions &amp; Answers</h2>
+      <div class="sh">
+        <div class="sh-label rv">006 / Atlas10X</div>
+        <div class="sh-sub rv rv-d1">Simple answers to help you get started.</div>
+        <div class="sh-desc rv rv-d2">Spend less time guessing, more time creating.</div>
+      </div>
+      <div class="faq-ly rv">
+        <div class="faq-list">
+          <div class="ac-item rvs"><button class="ac-trig">What exactly is Atlas10X? <span
+                class="ac-icon"><span></span><span></span></span></button>
+            <div class="ac-ct">
+              <div class="ac-ct-in">Atlas10X is a creative intelligence platform that helps performance marketers never
+                start from scratch. It combines a searchable library of millions of real ads, automated competitive
+                analysis, and intelligence-driven ad generation into one system.</div>
+            </div>
+          </div>
+          <div class="ac-item rvs"><button class="ac-trig">How is this different from an ad spy tool? <span
+                class="ac-icon"><span></span><span></span></span></button>
+            <div class="ac-ct">
+              <div class="ac-ct-in">Spy tools show what competitors run. Atlas10X analyzes why those ads work, maps the
+                strategic patterns, and helps you generate new creative based on that intelligence.</div>
+            </div>
+          </div>
+          <div class="ac-item rvs"><button class="ac-trig">How does the AI avoid "AI slop"? <span
+                class="ac-icon"><span></span><span></span></span></button>
+            <div class="ac-ct">
+              <div class="ac-ct-in">Every generated ad is grounded in real reference images — your brand assets plus
+                competitor references. The AI remixes proven techniques with your brand identity. The output is
+                production-ready, not generic.</div>
+            </div>
+          </div>
+          <div class="ac-item rvs"><button class="ac-trig">What kind of brands use Atlas10X? <span
+                class="ac-icon"><span></span><span></span></span></button>
+            <div class="ac-ct">
+              <div class="ac-ct-in">Performance marketers, DTC brands, e-commerce teams, and creative agencies managing
+                multi-client ad production.</div>
+            </div>
+          </div>
+          <div class="ac-item rvs"><button class="ac-trig">How long does competitive analysis take? <span
+                class="ac-icon"><span></span><span></span></span></button>
+            <div class="ac-ct">
+              <div class="ac-ct-in">Minutes, not weeks. Paste a URL and Atlas10X discovers competitors, pulls their live
+                ads, and generates a full strategic report.</div>
+            </div>
+          </div>
+          <div class="ac-item rvs"><button class="ac-trig">Can I search by uploading an image? <span
+                class="ac-icon"><span></span><span></span></span></button>
+            <div class="ac-ct">
+              <div class="ac-ct-in">Yes. Upload any ad image and Atlas10X finds visually similar ads in the library. You
+                can also search by concept, emotion, or visual style.</div>
+            </div>
+          </div>
+          <div class="ac-item rvs"><button class="ac-trig">What export formats are supported? <span
+                class="ac-icon"><span></span><span></span></span></button>
+            <div class="ac-ct">
+              <div class="ac-ct-in">All major formats — 1:1, 4:5, 9:16, and custom sizes. One click to export for every
+                platform.</div>
+            </div>
+          </div>
+        </div>
+        <div class="faq-sb rv">
+          <div class="faq-sb-img">[ Team Photo ]</div>
+          <h3>Still have questions?</h3>
+          <p>Every team's needs are different. Let our experts show you how Atlas10X works for your requirements.</p>
+          <a href="#contact" class="cta-l">Let's have a chat <span class="cta-c"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="s-spacer"></div>
+
+  <!-- CTA -->
+  <section class="cta-s" id="contact">
+    <div class="sc">
+      <h2 class="cta-mh rv">Let's Talk.</h2>
+      <div class="cta-g">
+        <div class="cta-inf rv">
+          <h4>Follow us</h4>
+          <div class="cta-soc"><a href="#">Li</a><a href="#">X</a><a href="#">IG</a><a href="#">YT</a></div>
+          <h4>What we offer</h4>
+          <p>Semantic ad search across millions of creatives<br>Automated competitive
+            intelligence<br>Intelligence-driven ad generation<br>Multi-format export<br>Strategic creative reports</p>
+          <h4>Contact</h4>
+          <p><a href="mailto:hello@atlas10x.com">hello@atlas10x.com</a></p>
+        </div>
+        <div class="cta-fm rv rv-d1">
+          <h3>Got a question, challenge, or idea?</h3>
+          <p>Fill out the form — we'll get back to you shortly.</p>
+          <input type="text" class="ff" placeholder="Your Name">
+          <input type="email" class="ff" placeholder="Your Email">
+          <input type="text" class="ff" placeholder="Your Company">
+          <textarea class="ff" placeholder="Your message"></textarea>
+          <div style="margin-top:.5rem"><span class="cta-c" style="cursor:pointer"><svg viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></span></div>
+          <p class="f-legal">By submitting, you agree to our <a href="#">Privacy Policy</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="sc">
+      <div class="ft-top rv">
+        <div class="ft-brand">
+          <svg class="rb" viewBox="0 0 100 100">
+            <defs>
+              <path id="bc" d="M 50,50 m -37,0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" />
+            </defs>
+            <circle cx="50" cy="50" r="20" fill="none" stroke="#E8573A" stroke-width="1" /><text font-size="7.5"
+              fill="#999" font-family="Inter,sans-serif" letter-spacing="2">
+              <textPath href="#bc">WE ANALYZE ADS • YOU CREATE WINNERS • </textPath>
+            </text>
+          </svg>
+          <div class="ft-bn">Atlas<span>10X</span></div>
+          <p>The smarter way to discover, analyze, and create winning ads.</p>
+        </div>
+        <div class="ft-nav">
+          <h5>Platform</h5>
+          <ul>
+            <li><a href="#discovery">Ad Intelligence</a></li>
+            <li><a href="#intelligence">Strategic Analysis</a></li>
+            <li><a href="#studio">Creative Studio</a></li>
+            <li><a href="#process">Our Process</a></li>
+            <li><a href="#metrics">Metrics</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+        <div class="ft-nl">
+          <h5>Stay in the loop</h5>
+          <p>Get the latest on creative intelligence, ad strategy, and Atlas10X updates.</p>
+          <div class="nl-f"><input type="email" placeholder="Your Email"><span class="cta-c"
+              style="cursor:pointer;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg></span></div>
+        </div>
+      </div>
+      <div class="ft-bot"><span>&copy; 2025 Atlas10X. All rights reserved.</span><span>Built with creative
+          intelligence.</span></div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var ls = document.getElementById('loader');
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('load', function () {
+        setTimeout(function () {
+          ls.classList.add('done');
+          document.body.style.overflow = '';
+          init();
+        }, 300);
+      });
+
+      var spb = document.getElementById('spb');
+
+      /* TRANSITION — sequential letter-by-letter fill, each completes before next starts */
+      var transChars = null, transSection = null, floatShapes = null, totalChars = 0;
+      function initTransition() {
+        transSection = document.getElementById('trans-section');
+        /* Split every word into individual letter spans */
+        var words = document.querySelectorAll('#trans-text .trans-word');
+        words.forEach(function (w) {
+          var text = w.textContent;
+          var isAccent = w.classList.contains('accent-word');
+          w.textContent = '';
+          for (var i = 0; i < text.length; i++) {
+            var span = document.createElement('span');
+            span.className = 'trans-char';
+            span.textContent = text[i];
+            if (isAccent) span.dataset.accent = '1';
+            w.appendChild(span);
+          }
+        });
+        transChars = document.querySelectorAll('#trans-text .trans-char');
+        totalChars = transChars.length;
+        floatShapes = document.querySelectorAll('#float-shapes .float-shape');
+      }
+      function updateTransition() {
+        if (!transChars || !transSection) return;
+        var rect = transSection.getBoundingClientRect();
+        var vh = window.innerHeight;
+        var scrollRange = transSection.offsetHeight;
+        /* Delay start so fill begins once the text line has scrolled into view
+           from the bottom — not when the section top enters viewport */
+        var rawProgress = (vh - rect.top) / scrollRange;
+        var progress = Math.max(0, Math.min(1, (rawProgress - 0.30) / 0.70));
+
+        /* Map scroll progress to which character is currently filling.
+           Each character gets its own tiny slice of the total progress.
+           charIndex = which char is active right now
+           charFill = how filled that char is (0-1) */
+        /* Fill completes within first 45% of scroll progress — slower reveal */
+        var fillProgress = Math.min(progress / 0.45, 1);
+        var charPosition = fillProgress * totalChars;
+
+        for (var i = 0; i < totalChars; i++) {
+          var c = transChars[i];
+          var fill;
+          if (i < charPosition - 1) {
+            fill = 1; /* fully filled — this letter is done */
+          } else if (i < charPosition) {
+            fill = charPosition - i; /* currently filling — partial */
+          } else {
+            fill = 0; /* not started yet — ghost */
+          }
+
+          var a = 0.12 + fill * 0.88;
+
+          if (c.dataset.accent) {
+            var r = Math.round(255 + (232 - 255) * fill);
+            var g = Math.round(255 + (87 - 255) * fill);
+            var b = Math.round(255 + (58 - 255) * fill);
+            c.style.color = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+          } else {
+            c.style.color = 'rgba(255,255,255,' + a + ')';
+          }
+        }
+
+        /* Shapes fade in during first 30% of scroll */
+        if (floatShapes) {
+          var shapeFill = Math.max(0, Math.min(1, progress / 0.3));
+          for (var j = 0; j < floatShapes.length; j++) {
+            floatShapes[j].style.opacity = shapeFill;
+          }
+        }
+      }
+
+      function onScroll() {
+        var st = window.scrollY, dh = document.documentElement.scrollHeight - window.innerHeight;
+        spb.style.transform = 'scaleX(' + (dh > 0 ? st / dh : 0) + ')';
+        updateTransition();
+        /* Fade canvas out after hero+transition area */
+        var hpw = document.getElementById('hpw');
+        if (hpw) {
+          var bottom = hpw.offsetTop + hpw.offsetHeight;
+          var fadeStart = bottom - window.innerHeight * 0.5;
+          var fadeEnd = bottom;
+          var canvasEl = document.getElementById('hc');
+          if (st > fadeEnd) { canvasEl.style.opacity = '0'; }
+          else if (st > fadeStart) { canvasEl.style.opacity = String(1 - (st - fadeStart) / (fadeEnd - fadeStart)); }
+          else { canvasEl.style.opacity = '1'; }
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      function initParticles() {
+        var c = document.getElementById('hc'), ctx = c.getContext('2d');
+        var TOTAL = 192;
+        var FPS = 24;
+        var BATCH = 20;
+        var frames = [];
+        var currentFrame = 0;
+        var lastFrameTime = 0;
+        var frameInterval = 1000 / FPS;
+
+        function resize() {
+          c.width = window.innerWidth;
+          c.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        /* Preload all frames in batches */
+        var basePath = 'animations/hero/frames';
+        var loaded = 0;
+
+        function loadFrame(index) {
+          return new Promise(function (resolve, reject) {
+            var img = new Image();
+            img.onload = function () { frames[index] = img; loaded++; resolve(); };
+            img.onerror = function () { resolve(); }; /* skip failed frames */
+            img.src = basePath + '/frame-' + String(index + 1).padStart(4, '0') + '.webp';
+          });
+        }
+
+        async function preloadAll() {
+          for (var i = 0; i < TOTAL; i += BATCH) {
+            var batch = [];
+            for (var j = i; j < Math.min(i + BATCH, TOTAL); j++) {
+              batch.push(loadFrame(j));
+            }
+            await Promise.all(batch);
+          }
+        }
+
+        /* Draw loop — plays frames in a continuous loop at 24fps */
+        function draw(timestamp) {
+          if (!lastFrameTime) lastFrameTime = timestamp;
+          var elapsed = timestamp - lastFrameTime;
+
+          if (elapsed >= frameInterval) {
+            lastFrameTime = timestamp - (elapsed % frameInterval);
+            /* Advance by 0.5 frames per tick — smooth 50% slowdown */
+            currentFrame = (currentFrame + 0.5) % TOTAL;
+          }
+
+          var displayFrame = Math.floor(currentFrame);
+          if (frames[displayFrame]) {
+            var w = c.width, h = c.height;
+            var img = frames[displayFrame];
+
+            /* Draw frame covering the full canvas, maintaining aspect ratio */
+            var scale = Math.max(w / img.width, h / img.height);
+            var dw = img.width * scale;
+            var dh = img.height * scale;
+            var dx = (w - dw) / 2;
+            var dy = (h - dh) / 2;
+
+            ctx.clearRect(0, 0, w, h);
+            ctx.drawImage(img, dx, dy, dw, dh);
+
+            /* Mask out the Veo watermark — larger, darker corner fade */
+            var grad = ctx.createRadialGradient(w, h, 0, w, h, w * 0.35);
+            grad.addColorStop(0, 'rgba(10,10,10,1)');
+            grad.addColorStop(0.5, 'rgba(10,10,10,0.8)');
+            grad.addColorStop(1, 'rgba(10,10,10,0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(w * 0.6, h * 0.6, w * 0.4, h * 0.4);
+
+            /* Dark glass overlay across entire frame — lets particles show through but darkened */
+            ctx.fillStyle = 'rgba(10,10,10,0.55)';
+            ctx.fillRect(0, 0, w, h);
+          }
+
+          requestAnimationFrame(draw);
+        }
+
+        /* Start: preload then play */
+        preloadAll().then(function () {
+          requestAnimationFrame(draw);
+        });
+      }
+
+      function initReveals() {
+        var obs = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) e.target.classList.add('vis') }) }, { threshold: .1, rootMargin: "-15% 0px" });
+        document.querySelectorAll('.rv,.rvs').forEach(function (el) { obs.observe(el) })
+      }
+
+      function initCounters() {
+        var obs = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting && !e.target.dataset.an) { e.target.dataset.an = '1'; animC(e.target) } }) }, { threshold: .5 });
+        document.querySelectorAll('[data-count]').forEach(function (el) { obs.observe(el) })
+      }
+      function animC(el) {
+        var tgt = parseFloat(el.dataset.count), suf = el.dataset.suffix || '', pre = el.dataset.prefix || '', disp = el.dataset.display, dec = parseInt(el.dataset.decimals) || 0, dur = 1000, st = performance.now();
+        function tick(now) {
+          var e = now - st, pr = Math.min(e / dur, 1), ea = 1 - Math.pow(1 - pr, 3);
+          if (disp && pr >= 1) { el.textContent = pre + disp + suf; return }
+          var cur = tgt * ea;
+          if (dec > 0) el.textContent = pre + cur.toFixed(dec) + suf;
+          else if (tgt >= 1e6) el.textContent = pre + (cur / 1e6).toFixed(1) + 'M' + suf;
+          else el.textContent = pre + Math.floor(cur).toLocaleString() + suf;
+          if (pr < 1) requestAnimationFrame(tick)
+        }
+        requestAnimationFrame(tick)
+      }
+
+      function initCharts() {
+        var obs = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting && !e.target.dataset.an) { e.target.dataset.an = '1'; var bars = e.target.querySelectorAll('.mb-b'); bars.forEach(function (b, i) { setTimeout(function () { b.style.height = b.dataset.height + '%' }, i * 60) }) } }) }, { threshold: .3 });
+        document.querySelectorAll('.mb').forEach(function (el) { obs.observe(el) })
+      }
+
+      function initDonut() {
+        var donut = document.getElementById('donut-chart');
+        if (!donut) return;
+        var obs = new IntersectionObserver(function (es) {
+          es.forEach(function (e) {
+            if (e.isIntersecting && !e.target.dataset.an) {
+              e.target.dataset.an = '1';
+              var segs = e.target.querySelectorAll('.donut-seg');
+              var offset = 0;
+              segs.forEach(function (seg, i) {
+                var target = parseFloat(seg.dataset.target);
+                var segOffset = seg.dataset.offset ? parseFloat(seg.dataset.offset) : offset;
+                setTimeout(function () {
+                  seg.setAttribute('stroke-dasharray', target + ' ' + (264 - target));
+                  seg.setAttribute('stroke-dashoffset', -segOffset);
+                }, i * 200);
+                offset += target;
+              });
+            }
+          });
+        }, { threshold: .3 });
+        obs.observe(donut);
+      }
+
+      function initGauges() {
+        var obs = new IntersectionObserver(function (es) {
+          es.forEach(function (e) {
+            if (e.isIntersecting && !e.target.dataset.an) {
+              e.target.dataset.an = '1';
+              e.target.style.transform = 'translateX(-50%) rotate(' + e.target.dataset.rotate + 'deg)';
+            }
+          });
+        }, { threshold: .3 });
+        document.querySelectorAll('.gauge-hand').forEach(function (el) { obs.observe(el) });
+      }
+
+      function initEvoBars() {
+        var evo = document.getElementById('evo-bars');
+        if (!evo) return;
+        var obs = new IntersectionObserver(function (es) {
+          es.forEach(function (e) {
+            if (e.isIntersecting && !e.target.dataset.an) {
+              e.target.dataset.an = '1';
+              var fills = e.target.querySelectorAll('.evo-bar-fill');
+              fills.forEach(function (f, i) {
+                setTimeout(function () { f.style.height = f.dataset.height + '%' }, i * 150);
+              });
+            }
+          });
+        }, { threshold: .3 });
+        obs.observe(evo);
+      }
+
+      function initAccordion() {
+        document.querySelectorAll('.ac-trig').forEach(function (t) {
+          t.addEventListener('click', function () {
+            var item = t.parentElement, ct = item.querySelector('.ac-ct'), isOpen = item.classList.contains('open');
+            item.parentElement.querySelectorAll('.ac-item.open').forEach(function (o) { o.classList.remove('open'); o.querySelector('.ac-ct').style.maxHeight = '0' });
+            if (!isOpen) { item.classList.add('open'); ct.style.maxHeight = ct.scrollHeight + 'px' }
+          })
+        })
+      }
+
+      function initTabs() {
+        /* Horizontal accordion */
+        document.querySelectorAll('.ha-card').forEach(function (card) {
+          card.addEventListener('click', function () {
+            document.querySelectorAll('.ha-card').forEach(function (c) { c.classList.remove('ha-active') });
+            card.classList.add('ha-active');
+          });
+        });
+      }
+
+      function initCarousel() {
+        var slides = document.querySelectorAll('#proc-slides .proc-slide');
+        var dots = document.querySelectorAll('#proc-dots .pc-dot');
+        var scenes = document.querySelectorAll('#proc-img .proc-scene');
+        var cur = 0, tot = 4;
+        function goTo(i) {
+          cur = ((i % tot) + tot) % tot;
+          slides.forEach(function (s, j) { s.classList.toggle('proc-slide-active', j === cur) });
+          dots.forEach(function (d, j) { d.classList.toggle('active', j === cur) });
+          scenes.forEach(function (sc, j) { sc.classList.toggle('proc-scene-active', j === cur) });
+        }
+        var prevBtn = document.getElementById('proc-prev');
+        var nextBtn = document.getElementById('proc-next');
+        if (prevBtn) prevBtn.addEventListener('click', function () { goTo(cur - 1) });
+        if (nextBtn) nextBtn.addEventListener('click', function () { goTo(cur + 1) });
+        dots.forEach(function (d, i) { d.addEventListener('click', function () { goTo(i) }) });
+      }
+
+      function initStagger() {
+        document.querySelectorAll('.bg,.faq-list,.sv-tabs,.work-row-1,.work-row-2,.work-row-3,.ha-wrap,.mg,.ft-top,.cta-g').forEach(function (g) { g.querySelectorAll('.rvs,.rv').forEach(function (c, i) { if (!c.style.transitionDelay || c.style.transitionDelay === '0s') c.style.transitionDelay = (i * .12) + 's' }) })
+      }
+
+      function initIterate() {
+        var btn = document.getElementById('iterate-btn');
+        var slides = document.querySelectorAll('#iterate-slides .iterate-slide');
+        if (!btn || !slides.length) return;
+        var cur = 0;
+        btn.addEventListener('click', function () {
+          slides[cur].classList.remove('iterate-active');
+          cur = (cur + 1) % slides.length;
+          slides[cur].classList.add('iterate-active');
+        });
+      }
+
+      function initMosaic() {
+        document.querySelectorAll('.mosaic-card').forEach(function (card) {
+          var container = card.querySelector('.mosaic-container');
+          if (!container) return;
+          var w = card.offsetWidth;
+          var h = card.offsetHeight;
+          var blockSize = 40;
+          var cols = Math.ceil(w / blockSize);
+          var rows = Math.ceil(h / blockSize);
+          container.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+          container.style.gridTemplateRows = 'repeat(' + rows + ', 1fr)';
+
+          for (var i = 0; i < cols * rows; i++) {
+            var block = document.createElement('div');
+            block.className = 'mosaic-block';
+            block.style.transitionDelay = (Math.random() * 800) + 'ms';
+            container.appendChild(block);
+          }
+
+          /* Trigger reveal on scroll */
+          var obs = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting) {
+                card.classList.add('revealed');
+              }
+            });
+          }, { threshold: 0.3 });
+          obs.observe(card);
+        });
+      }
+
+      function initDotWaves() {
+        var grids = document.querySelectorAll('.work-accent-dots, .ha-detail-dots');
+        grids.forEach(function (grid) {
+          var isLight = grid.classList.contains('work-accent-dots');
+          var gridSize = isLight ? 28 : 32;
+          var dotR = isLight ? 2 : 1.5;
+
+          var canvas = document.createElement('canvas');
+          canvas.className = 'dot-wave-canvas';
+          grid.appendChild(canvas);
+          var ctx = canvas.getContext('2d');
+
+          var w, h, cols, rows, offX, offY;
+
+          function resize() {
+            var rect = grid.getBoundingClientRect();
+            w = canvas.width = rect.width;
+            h = canvas.height = rect.height;
+            cols = Math.floor(w / gridSize) + 1;
+            rows = Math.floor(h / gridSize) + 1;
+            offX = (w - (cols - 1) * gridSize) / 2;
+            offY = (h - (rows - 1) * gridSize) / 2;
+          }
+          resize();
+
+          var resizeTimer;
+          window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(resize, 200);
+          });
+
+          /* Hide CSS gradient dots — canvas draws them all */
+          grid.style.backgroundImage = 'none';
+
+          var baseAlpha = isLight ? 0.45 : 0.35;
+          var dotColor = '255,255,255';
+          var t = Math.random() * 100;
+          var maxAmp = 14;
+
+          function draw() {
+            t += 0.02;
+            ctx.clearRect(0, 0, w, h);
+
+            for (var r = 0; r < rows; r++) {
+              for (var c = 0; c < cols; c++) {
+                var baseX = offX + c * gridSize;
+                var baseY = offY + r * gridSize;
+
+                /* Normalized position: 0 = top, 1 = bottom */
+                var ny = r / (rows - 1 || 1);
+
+                /* Sigmoid envelope — amplitude grows towards the bottom (viewer) */
+                var envelope = 1 / (1 + Math.exp(-8 * (ny - 0.3)));
+
+                /* Vertical wave — flows downward through the grid */
+                var phase = r * 0.45 + c * 0.08 + t * 1.6;
+                var displacement = Math.sin(phase) * maxAmp * envelope;
+
+                var drawX = baseX;
+                var drawY = baseY + displacement;
+
+                ctx.fillStyle = 'rgba(' + dotColor + ',' + baseAlpha + ')';
+                ctx.beginPath();
+                ctx.arc(drawX, drawY, dotR, 0, Math.PI * 2);
+                ctx.fill();
+              }
+            }
+
+            if (running) requestAnimationFrame(draw);
+          }
+
+          /* Only animate when visible */
+          var running = false;
+          var obs = new IntersectionObserver(function (entries) {
+            entries.forEach(function (e) {
+              if (e.isIntersecting && !running) {
+                running = true;
+                resize();
+                requestAnimationFrame(draw);
+              } else if (!e.isIntersecting) {
+                running = false;
+              }
+            });
+          }, { threshold: 0.1 });
+          obs.observe(grid);
+        });
+      }
+
+      function init() { initParticles(); initReveals(); initCounters(); initCharts(); initDonut(); initGauges(); initEvoBars(); initAccordion(); initTabs(); initCarousel(); initStagger(); initTransition(); initMosaic(); initDotWaves(); initIterate() }
+    })();
+  </script>
+</body>
+
+</html>

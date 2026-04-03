@@ -1,0 +1,657 @@
+/* ==========================================================
+   MOBILE OVERRIDES — Atlas10X Landing Page
+   Loaded via <link media="(max-width:768px)">
+   Each section maps to a numbered commit for easy rollback.
+   ========================================================== */
+
+/* ----------------------------------------------------------
+   1. ROOT & GLOBAL
+   ---------------------------------------------------------- */
+:root {
+  --sec-pad: 60px;
+}
+
+.sc {
+  padding: 0 1.2rem;
+}
+
+.s-spacer {
+  height: var(--sec-pad);
+}
+
+/* Tighten section title on small screens */
+.sdt {
+  font-size: clamp(2.8rem, 9vw, 4rem);
+  margin-bottom: 2rem;
+}
+
+/* Section header — single column already at 1024px, just tighten gaps */
+.sh {
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.sh-sub {
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+}
+
+/* ----------------------------------------------------------
+   2. HERO
+   ---------------------------------------------------------- */
+
+/* Allow hero headline to reflow naturally on mobile */
+.h-hl span {
+  white-space: normal !important;
+}
+
+.h-hl br {
+  display: none;
+}
+
+.h-hl {
+  font-size: clamp(3rem, 12vw, 4rem);
+  margin-bottom: 1.2rem;
+  line-height: 1.1;
+}
+
+.hero-ct {
+  padding: 0 1.2rem;
+  padding-top: 3.5rem;
+}
+
+.hero {
+  min-height: auto;
+  padding-bottom: 1rem;
+}
+
+.h-acts-text {
+  font-size: .9rem;
+}
+
+.h-acts-text span {
+  font-size: .75rem;
+  margin-top: .2rem;
+}
+
+.h-stat-v {
+  font-size: 1.4rem;
+}
+
+/* Stack the action row vertically */
+.h-acts {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .8rem;
+  margin-bottom: 1rem;
+}
+
+.h-badge {
+  margin-bottom: 1rem;
+  font-size: .8rem;
+}
+
+/* Hide stats row (uptime/performance) on mobile */
+.h-stats {
+  display: none;
+}
+
+/* Hide the decorative line divider */
+.h-acts-line {
+  display: none;
+}
+
+/* URL input bar — force full width */
+.h-acts > div:last-child {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Stats row — already stacks at 640px, tighten further */
+.h-stats {
+  gap: 1.2rem;
+}
+
+.h-stat-v {
+  font-size: 1.8rem;
+}
+
+/* Reduce canvas performance load on mobile */
+#hc {
+  opacity: 0.6;
+}
+
+/* Hide transition section (animated text) on mobile */
+.trans-s {
+  display: none;
+}
+
+/* ----------------------------------------------------------
+   3. NAV
+   ---------------------------------------------------------- */
+nav {
+  padding: 1rem 1.2rem;
+}
+
+.n-logo {
+  font-size: 1.2rem;
+}
+
+/* ----------------------------------------------------------
+   4. WORK GRID (Discovery / Intelligence / Studio)
+   ---------------------------------------------------------- */
+
+/* All rows single column */
+.work-row-1,
+.work-row-2,
+.work-row-3 {
+  grid-template-columns: 1fr;
+}
+
+/* Featured cards — don't lock to viewport height */
+.work-featured {
+  height: auto;
+  min-height: 350px;
+}
+
+.work-sm,
+.work-sm-tall {
+  height: 300px;
+}
+
+/* Stats card — reduce large counter */
+.work-stats {
+  height: auto;
+  min-height: 280px;
+  padding: 1.5rem;
+}
+
+.work-stats-value {
+  font-size: 3rem;
+}
+
+/* Accent card — tighten padding */
+.work-accent {
+  padding: 1.5rem;
+}
+
+.work-accent-title {
+  font-size: clamp(1.3rem, 5vw, 1.8rem);
+}
+
+/* Competitor intel grid — 3 columns instead of 6 */
+.ci-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* CTA row — stack on mobile, ensure no overlap with accordion cards */
+.cta-r {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* Prevent CTA from overlapping ha-detail card */
+.ha-wrap + .cta-r,
+.cta-r[style*="margin-top"] {
+  margin-top: 2rem !important;
+  position: relative;
+  z-index: 10;
+}
+
+/* Card label & title positioning — ensure readable on smaller cards */
+.work-card-title {
+  font-size: 1.1rem;
+}
+
+/* ----------------------------------------------------------
+   5. BENTO GRID (feature cards)
+   ---------------------------------------------------------- */
+
+/* Single column on mobile */
+.bg {
+  grid-template-columns: 1fr;
+}
+
+/* Remove span-2 on mobile */
+.bc.sp2 {
+  grid-column: span 1;
+}
+
+/* Reduce card height and padding */
+.bc {
+  min-height: 320px;
+  padding: 1.5rem;
+}
+
+.bc-head {
+  max-width: 100%;
+}
+
+.bc-tt {
+  font-size: 1.3rem;
+}
+
+.bc-tx {
+  max-width: 100%;
+  font-size: .85rem;
+}
+
+/* Orange feature card — tighter on mobile */
+.bc.feat .bc-tt {
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+}
+
+.bc.feat .bc-tx {
+  font-size: 1rem;
+}
+
+/* Grid icon — keep but smaller */
+.bc-grid-icon {
+  top: 1.5rem;
+  right: 1.5rem;
+}
+
+/* ----------------------------------------------------------
+   6. HORIZONTAL ACCORDION (services/features)
+   ---------------------------------------------------------- */
+
+/* Already vertical at 1024px — reduce heights and padding further */
+.ha-wrap {
+  gap: .4rem;
+  min-height: auto;
+  max-height: none;
+}
+
+.ha-header {
+  padding: 0 1.2rem;
+}
+
+.ha-card {
+  padding: 1rem;
+}
+
+.ha-card:not(.ha-active) {
+  padding: .8rem 1rem;
+}
+
+.ha-card:not(.ha-active) .ha-num {
+  font-size: 1.2rem;
+}
+
+.ha-card.ha-active {
+  padding: 1.2rem;
+}
+
+.ha-title {
+  font-size: .95rem;
+}
+
+.ha-desc {
+  font-size: .75rem;
+}
+
+.ha-img-wrap {
+  margin-top: .75rem;
+}
+
+/* Hide detail panel (card 5) on mobile — redundant */
+.ha-detail {
+  display: none !important;
+}
+
+/* Also hide the section CTA rows that overlap on mobile */
+#intelligence > .sc > .cta-r,
+.ha-wrap ~ .cta-r {
+  display: none !important;
+}
+
+/* Report stack cards — smaller on mobile */
+.rp-card {
+  padding: .7rem 1rem;
+}
+
+.rp-text {
+  font-size: .9rem;
+}
+
+/* Scrolling report image — cap height so it doesn't overflow */
+.ha-img-wrap,
+.ha-img-wrap.ha-scroll-wrap {
+  max-height: 300px !important;
+  flex: 0 0 auto !important;
+  overflow: hidden;
+}
+
+/* Conveyor items — smaller on mobile */
+.conveyor-item {
+  width: 140px;
+  height: 175px;
+}
+
+/* ----------------------------------------------------------
+   7. PROCESS SECTION
+   ---------------------------------------------------------- */
+
+/* Already single column at 1024px — refine for mobile */
+.proc-wrap {
+  gap: .5rem;
+}
+
+.proc-image {
+  height: 250px;
+}
+
+.proc-header {
+  padding: 1rem 1.2rem;
+}
+
+.proc-label {
+  font-size: .85rem;
+}
+
+.proc-slides {
+  padding: 1.5rem;
+}
+
+.proc-slide h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.proc-slide p {
+  font-size: .85rem;
+}
+
+.proc-stat-val {
+  font-size: 2.2rem;
+}
+
+.proc-cta-col {
+  min-width: auto;
+  padding: 1.2rem;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Hide decorative d-bars on mobile — they overlap content */
+.d-bars {
+  display: none;
+}
+
+/* Stack all section CTA rows vertically */
+.cta-r {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* Process carousel (legacy) — single column */
+.pc-slide {
+  gap: 1.5rem;
+}
+
+.pc-vis {
+  height: 220px;
+}
+
+.pc-ct h4 {
+  font-size: 1.4rem;
+}
+
+/* ----------------------------------------------------------
+   8. PERFORMANCE BENTO DASHBOARD
+   ---------------------------------------------------------- */
+
+/* Already single column at 640px — fine-tune sizing */
+.bento-row {
+  gap: .75rem;
+  margin-bottom: .75rem;
+}
+
+.bento-row-1,
+.bento-row-2 {
+  grid-template-columns: 1fr;
+}
+
+.bento-row-1 .bc:first-child {
+  grid-column: auto;
+}
+
+/* Metric cards — reduce large values */
+.mc-v {
+  font-size: 2rem;
+}
+
+/* Donut chart — slightly smaller */
+.donut-svg {
+  width: 120px;
+  height: 120px;
+}
+
+.donut-stats {
+  gap: 1rem;
+}
+
+.donut-stat-v {
+  font-size: 1.2rem;
+}
+
+/* Gauge circles — smaller */
+.gauge-circle {
+  width: 54px;
+  height: 54px;
+}
+
+.gauge-hand {
+  height: 20px;
+}
+
+.gauge-hand-s {
+  height: 15px;
+}
+
+/* Evolution bars — reduce height */
+.evo-bars {
+  height: 90px;
+  gap: 6px;
+}
+
+.evo-score-v {
+  font-size: 1.6rem;
+}
+
+/* Line chart — slightly shorter */
+.lc-wrap {
+  height: 80px;
+}
+
+.lc-stats {
+  gap: 1rem;
+}
+
+.lc-stat-v {
+  font-size: 1.1rem;
+}
+
+/* Small side card */
+.bc-sm-stat {
+  font-size: 1.8rem;
+}
+
+/* News ticker — smaller text */
+.news-ticker-item {
+  font-size: .75rem;
+}
+
+/* ----------------------------------------------------------
+   9. MARQUEE & TICKER
+   ---------------------------------------------------------- */
+
+.mq-s {
+  padding: 1.5rem 0;
+}
+
+.mq-i {
+  font-size: clamp(1.2rem, 5vw, 1.8rem);
+  gap: 1.2rem;
+  padding: 0 1.2rem;
+}
+
+.mq-i .tl {
+  font-size: clamp(.65rem, 2vw, .85rem);
+}
+
+/* Ticker strip */
+.tk-i {
+  font-size: .75rem;
+  gap: 1rem;
+  padding: 0 1.2rem;
+}
+
+/* ----------------------------------------------------------
+   10. FAQ
+   ---------------------------------------------------------- */
+
+/* Already single column at 1024px — refine spacing */
+.faq-ly {
+  gap: 2rem;
+}
+
+.ac-trig {
+  font-size: .95rem;
+  padding: 1.2rem 0;
+}
+
+.ac-ct-in {
+  font-size: .85rem;
+}
+
+/* Sidebar — reduce image height */
+.faq-sb-img {
+  height: 180px;
+}
+
+.faq-sb h3 {
+  font-size: 1.1rem;
+}
+
+.faq-sb p {
+  font-size: .8rem;
+}
+
+/* ----------------------------------------------------------
+   11. CTA & CONTACT
+   ---------------------------------------------------------- */
+
+.cta-s {
+  padding: var(--sec-pad) 0;
+}
+
+.cta-mh {
+  font-size: clamp(2.5rem, 12vw, 5rem);
+  margin-bottom: 2.5rem;
+}
+
+/* Already single column at 1024px — tighten gap */
+.cta-g {
+  gap: 2.5rem;
+}
+
+.cta-fm h3 {
+  font-size: 1.1rem;
+}
+
+/* Form fields — ensure proper touch targets */
+.ff {
+  padding: .85rem 1rem;
+  font-size: .9rem;
+}
+
+textarea.ff {
+  min-height: 100px;
+}
+
+/* Social icons — slightly larger touch targets */
+.cta-soc a {
+  width: 40px;
+  height: 40px;
+}
+
+/* ----------------------------------------------------------
+   12. FOOTER
+   ---------------------------------------------------------- */
+
+footer {
+  padding: 3rem 0 1.5rem;
+}
+
+/* Single column on mobile */
+.ft-top {
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+.ft-bn {
+  font-size: 1.6rem;
+}
+
+/* Newsletter input — stack button below on very narrow screens */
+.nl-f {
+  flex-direction: column;
+}
+
+.nl-f input {
+  width: 100%;
+}
+
+/* Footer bottom bar — stack */
+.ft-bot {
+  flex-direction: column;
+  gap: .8rem;
+  text-align: center;
+}
+
+/* ----------------------------------------------------------
+   13. PERFORMANCE & ANIMATION OPTIMIZATIONS
+   ---------------------------------------------------------- */
+
+/* Reduce reveal animation travel distance — feels snappier on mobile */
+.rv {
+  transform: translateY(12px);
+  transition-duration: 1s;
+}
+
+.rvs {
+  transform: translateY(12px);
+}
+
+/* Shorten stagger delays so content doesn't feel slow on mobile */
+.rv-d1 { transition-delay: .15s; }
+.rv-d2 { transition-delay: .25s; }
+.rv-d3 { transition-delay: .4s; }
+.rv-d4 { transition-delay: .55s; }
+.rv-d5 { transition-delay: .7s; }
+
+/* Reduce mosaic complexity — fewer repaints on mobile GPUs */
+.mosaic-block {
+  transition-duration: .3s;
+}
+
+/* Prefer reduced motion — respect OS accessibility setting */
+@media (prefers-reduced-motion: reduce) {
+  .rv, .rvs {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0.01ms !important;
+  }
+
+  .mq-r, .tk-t, .news-ticker-inner, .conveyor-belt {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  #hc {
+    display: none;
+  }
+}

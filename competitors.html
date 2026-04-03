@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Competitors Section</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0d0f11;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .competitors-section {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 60px 32px 80px;
+      position: relative;
+    }
+
+    /* Ambient glow effects */
+    .competitors-section::before {
+      content: '';
+      position: absolute;
+      top: 200px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(34, 197, 94, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .competitors-section::after {
+      content: '';
+      position: absolute;
+      top: 150px;
+      right: -80px;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .section-header {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 8px;
+    }
+
+    .section-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .section-header h1 span {
+      color: #22c55e;
+    }
+
+    .section-subtitle {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Search bar */
+    .search-bar {
+      position: relative;
+      margin-bottom: 20px;
+      z-index: 1;
+    }
+
+    .search-bar input {
+      width: 280px;
+      padding: 10px 14px 10px 38px;
+      background: #1a1d21;
+      border: 1px solid #2a2d32;
+      border-radius: 8px;
+      color: #6b7280;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-bar input:focus {
+      border-color: #3a3d42;
+    }
+
+    .search-bar .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #4b5563;
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Tabs row */
+    .tabs-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tabs-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .tab {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b7280;
+      cursor: pointer;
+      padding-bottom: 6px;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s;
+    }
+
+    .tab.active {
+      color: #9ca3af;
+      border-bottom-color: #9ca3af;
+    }
+
+    .tab span {
+      color: #4b5563;
+    }
+
+    .deselect-link {
+      font-size: 12px;
+      color: #22c55e;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .deselect-link:hover {
+      opacity: 0.8;
+    }
+
+    /* Cards grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .competitor-card {
+      background: #14171b;
+      border: 1px solid #1e2228;
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      transition: border-color 0.2s;
+    }
+
+    .competitor-card:hover {
+      border-color: #2a2d32;
+    }
+
+    /* Card color themes */
+    .competitor-card.card-green {
+      background: #0d1f14;
+      border-color: #1a3325;
+    }
+
+    .competitor-card.card-purple {
+      background: #171327;
+      border-color: #2a2040;
+    }
+
+    .competitor-card.card-blue {
+      background: #0f1525;
+      border-color: #1a2540;
+    }
+
+    .competitor-card.card-yellow {
+      background: #1f1a0d;
+      border-color: #33291a;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .avatar.green {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+      border: 1.5px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .avatar.purple {
+      background: rgba(139, 92, 246, 0.15);
+      color: #8b5cf6;
+      border: 1.5px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .avatar.yellow {
+      background: rgba(234, 179, 8, 0.15);
+      color: #eab308;
+      border: 1.5px solid rgba(234, 179, 8, 0.3);
+    }
+
+    .card-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .avatar.blue {
+      background: rgba(59, 130, 246, 0.15);
+      color: #3b82f6;
+      border: 1.5px solid rgba(59, 130, 246, 0.3);
+    }
+
+    /* Card description */
+    .card-description {
+      font-size: 12px;
+      line-height: 1.6;
+      color: #6b7280;
+      margin-bottom: 16px;
+    }
+
+    /* Website link */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-footer svg {
+      width: 14px;
+      height: 14px;
+      color: #4b5563;
+    }
+
+    .card-footer a {
+      font-size: 12px;
+      color: #6b7280;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .card-footer a:hover {
+      color: #9ca3af;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="competitors-section">
+    <div class="section-header">
+      <h1>Found <span>59 competitors</span></h1>
+    </div>
+    <p class="section-subtitle">Select competitors to analyze their ads. All are selected by default.</p>
+
+    <div class="search-bar">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input type="text" placeholder="Search competitors...">
+    </div>
+
+    <div class="tabs-row">
+      <div class="tabs-left">
+        <div class="tab active">ICON</div>
+        <div class="tab">MATCH <span>(31)</span></div>
+      </div>
+    </div>
+
+    <div class="cards-grid">
+      <!-- Card 1: Alphalete Athletics -->
+      <div class="competitor-card card-green">
+        <div class="card-header">
+          <div class="avatar green">A</div>
+          <div class="card-name">Alphalete Athletics</div>
+        </div>
+        <p class="card-description">An influencer-led fitness brand focusing on high-quality, physique-enhancing gym wear
+          for bodybuilding and lifestyle.</p>
+        <div class="card-footer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+          <a href="#">Website</a>
+        </div>
+      </div>
+
+      <!-- Card 2: Aybl -->
+      <div class="competitor-card card-blue">
+        <div class="card-header">
+          <div class="avatar blue">A</div>
+          <div class="card-name">Aybl</div>
+        </div>
+        <p class="card-description">A UK-based activewear brand offering affordable, trend-led gym clothing and matching
+          sets primarily for the female fitness market.</p>
+        <div class="card-footer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+          <a href="#">Website</a>
+        </div>
+      </div>
+
+      <!-- Card 3: Bo+Tee -->
+      <div class="competitor-card card-purple">
+        <div class="card-header">
+          <div class="avatar purple">B</div>
+          <div class="card-name">Bo+Tee</div>
+        </div>
+        <p class="card-description">The activewear division of Oh Polly, offering fashion-forward matching sets and
+          high-intensity workout gear for the studio-to-street aesthetic.</p>
+        <div class="card-footer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+          <a href="#">Website</a>
+        </div>
+      </div>
+
+      <!-- Card 4: CRZ Yoga -->
+      <div class="competitor-card card-blue">
+        <div class="card-header">
+          <div class="avatar blue">C</div>
+          <div class="card-name">CRZ Yoga</div>
+        </div>
+        <p class="card-description">An Amazon-native value disruptor that offers high-performance activewear and seamless
+          leggings at a significantly lower price point than premium brands.</p>
+        <div class="card-footer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+          <a href="#">Website</a>
+        </div>
+      </div>
+
+      <!-- Card 5: Colorfulkoala -->
+      <div class="competitor-card card-green">
+        <div class="card-header">
+          <div class="avatar green">C</div>
+          <div class="card-name">Colorfulkoala</div>
+        </div>
+        <p class="card-description">A high-volume Amazon-native brand known for butter-soft leggings that serve as
+          affordable alternatives to Gymshark's core product lines.</p>
+        <div class="card-footer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+          <a href="#">Website</a>
+        </div>
+      </div>
+
+      <!-- Card 6: DFYNE -->
+      <div class="competitor-card card-yellow">
+        <div class="card-header">
+          <div class="avatar yellow">D</div>
+          <div class="card-name">DFYNE</div>
+        </div>
+        <p class="card-description">A rapidly growing UK-based brand known for its glute-accentuating leggings and viral
+          social media marketing targeting Gen Z gym-goers.</p>
+        <div class="card-footer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+          </svg>
+          <a href="#">Website</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
